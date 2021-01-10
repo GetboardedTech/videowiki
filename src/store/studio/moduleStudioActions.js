@@ -248,7 +248,7 @@ export default {
         .post(constants.apiUrl + '/videoapi/publish_video', videoUploadData)
         .then(res => {
           // commit("setVideos", res.data)
-          commit('setPublishStatus', true);
+          // commit('setPublishStatus', true);
           resolve(res);
         })
         .catch(err => {
@@ -331,5 +331,18 @@ export default {
   },
   resetState({ commit }) {
     commit('setInitialState');
+  },
+  postTxData({ commit }, payload) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(constants.apiUrl + '/transaction/oceanbuy', payload)
+        .then(res => {
+          console.log(res);
+          resolve(res);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
   }
 };

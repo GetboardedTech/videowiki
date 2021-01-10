@@ -3,7 +3,7 @@
     <vx-card class="video-card-inner cursor-pointer" @click="detailView">
       <div slot="no-body" class="relative">
         <img
-          :src="`${baseUrl}/media/${prop.thumbnail}`"
+          :src="`${baseUrl}/${prop.thumbnail}`"
           @error="$event.target.src = defaultImg"
           alt="Not Found"
           class="h-48"
@@ -12,18 +12,30 @@
         <vs-chip class="video-length">{{ prop.duration }}</vs-chip>
       </div>
       <div class="card-body">
-        <vs-row vs-type="flex" vs-align="center" v-if="!user">
-          <vx-tooltip text="Coming Soon!">
-            <vs-button
-              class="pl-3 text-xs fork-btn"
-              size="small"
-              @click.stop=""
-            >
-              <span class="text-custom-purple ml-3">Fork it!</span>
-            </vs-button>
-          </vx-tooltip>
-          <img src="@/assets/images/pages/git-branch.png" class="branch-icon" />
-        </vs-row>
+        <div v-if="!user" class="flex items-center justify-between">
+          <vs-row vs-type="flex" vs-align="center">
+            <vx-tooltip text="Coming Soon!">
+              <vs-button
+                class="pl-3 text-xs fork-btn"
+                size="small"
+                @click.stop=""
+              >
+                <span class="text-custom-purple ml-3">Fork it!</span>
+              </vs-button>
+            </vx-tooltip>
+            <img
+              src="@/assets/images/pages/git-branch.png"
+              class="branch-icon"
+            />
+          </vs-row>
+          <vs-icon
+            v-if="prop.paid"
+            icon="lock"
+            size="24px"
+            color="primary"
+            class="px-4"
+          />
+        </div>
         <div v-else>
           <vs-button
             type="filled"
@@ -57,6 +69,34 @@
         </div>
       </div>
     </vx-card>
+    <vs-popup title="Details" :active.sync="showTxModal">
+      <div class="flex justify-between">
+        <div>
+          <h4>{{ this.prop.title }}</h4>
+          <p>{{ this.prop.description }}</p>
+        </div>
+        <div>
+          <div class="text-2xl" v-if="!this.$store.state.isWalletConnected">
+            Connect Wallet !
+          </div>
+          <div v-else class="flex">
+            <vs-button
+              type="filled"
+              class="mr-2"
+              @click="buyContent"
+              :disabled="buyInProcess"
+              >Buy</vs-button
+            >
+            <vs-button
+              type="filled"
+              @click="downloadAsset"
+              :disabled="downloadInProgress"
+              >Download</vs-button
+            >
+          </div>
+        </div>
+      </div>
+    </vs-popup>
   </div>
 </template>
 
@@ -65,10 +105,12 @@ import constants from '../../../../constant';
 import img from '../../../assets/images/pages/VideoThumbnail.png';
 import axios from '../../../axios';
 import VxTooltip from '../../../layouts/components/vx-tooltip/VxTooltip.vue';
+import { ajaxCallMixin } from '../../../http/HttpCommon';
 export default {
   components: { VxTooltip },
   name: 'VideoCard',
   props: ['prop', 'user'],
+  mixins: [ajaxCallMixin],
   data() {
     return {
       months: [
@@ -85,6 +127,10 @@ export default {
         'Nov',
         'Dec',
       ],
+      videoTxData: {},
+      showTxModal: false,
+      buyInProcess: false,
+      downloadInProgress: false,
     };
   },
   computed: {
@@ -126,12 +172,55 @@ export default {
   },
   methods: {
     detailView() {
-      const route = this.$router.resolve({
-        name: 'Video View',
-        params: { slug: this.prop.id },
-        query: { url: this.prop.video },
+      if (this.prop.paid) {
+        this.getVideoTxData();
+        this.showTxModal = true;
+      } else {
+        const route = this.$router.resolve({
+          name: 'Video View',
+          params: { slug: this.prop.id },
+          query: { url: this.prop.video },
+        });
+        window.open(route.href, '_blank');
+      }
+    },
+    async buyContent() {
+      this.buyInProcess = true;
+      const purchase = await this.$store.dispatch(
+        'initiateBuy',
+        this.videoTxData.exchange_key
+      );
+      if (!purchase) {
+        this.$vs.notify({
+          title: 'Error',
+          text: 'Cannot process buy request',
+          color: 'danger',
+        });
+      }
+      this.buyInProcess = false;
+    },
+    async downloadAsset() {
+      this.downloadInProgress = true;
+      await this.$store.dispatch('startDownload', {
+        did: this.videoTxData.dod,
+        dta: this.videoTxData.dataToken,
       });
-      window.open(route.href, '_blank');
+      this.downloadInProgress = false;
+    },
+    getVideoTxData() {
+      const url = `/transaction/oceanbuy?video_id=${this.prop.id}`;
+      /*this.$vs.loading({
+        background: 'transparent',
+        container: '#div-with-loading',
+      });
+      this.isLoading = true;*/
+      this.getRequest(url, this.handleResponse);
+    },
+    handleResponse(apiResponse) {
+      /* this.$vs.loading.close('#div-with-loading > .con-vs-loading');
+      this.isLoading = false; */
+      this.videoTxData = apiResponse.data;
+      console.log(this.videoTxData);
     },
     editVideo() {
       this.$store.commit('studio/toggleText');

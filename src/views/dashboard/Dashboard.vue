@@ -60,6 +60,7 @@ export default {
       this.$vs.loading.close('#div-with-loading > .con-vs-loading');
       this.isLoading = false;
       this.videoList = apiResponse.data;
+      console.log(this.videoList);
     },
   },
 };

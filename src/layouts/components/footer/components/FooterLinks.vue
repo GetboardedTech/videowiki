@@ -53,6 +53,10 @@ export default {
             url: '/about'
           },
           {
+            title: 'Awards',
+            url: '/awards'
+          },
+          {
             title: 'Team',
             url: '/team'
           },

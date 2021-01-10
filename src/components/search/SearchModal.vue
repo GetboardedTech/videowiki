@@ -156,7 +156,7 @@ export default {
           if (Object.keys(res.data).length === 0) {
             this.$vs.notify({
               title: 'Not Found',
-              text: `Cannot find ${this.media}s related to this keyword`,
+              text: `Cannot find ${mediaType}s related to this keyword`,
               color: 'danger',
             });
           } else {

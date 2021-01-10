@@ -26,7 +26,9 @@
         <div class="text-left mb-2 mt-6">
           <div>
             <h6 class="mb-2">Title</h6>
-            <span class="text-danger text-sm" v-show="errors.has('title2')">This field is required</span>
+            <span class="text-danger text-sm" v-show="errors.has('title2')"
+              >This field is required</span
+            >
           </div>
           <input
             v-model="title"
@@ -39,7 +41,9 @@
         <div class="text-left mb-2">
           <div>
             <h6 class="mb-2">Description</h6>
-            <span class="text-danger text-sm" v-show="errors.has('desc')">This field is required</span>
+            <span class="text-danger text-sm" v-show="errors.has('desc')"
+              >This field is required</span
+            >
           </div>
           <textarea
             v-model="description"
@@ -49,7 +53,14 @@
             v-validate="'required'"
           />
         </div>
-        <div class="mt-8 text-left mb-4 flex items-center">
+        <div class="flex items-center mt-4">
+          <label for="paid-status" class="mr-2"><h6>Video Access</h6></label>
+          <vs-switch v-model="isPaid" id="paid-status">
+            <span slot="on">Paid</span>
+            <span slot="off">Free</span>
+          </vs-switch>
+        </div>
+        <div class="mt-4 text-left mb-4 flex items-center">
           <h6 class="mr-2">Tags</h6>
           <vx-tooltip text="Delete all">
             <vs-icon icon="delete" size="20px" @click="deleteAll" />
@@ -121,6 +132,17 @@ export default {
       set(value) {
         this.$store.commit('studio/SET_VIDEO_ATTR', {
           key: 'description',
+          value: value,
+        });
+      },
+    },
+    isPaid: {
+      get() {
+        return this.$store.state.studio.video.isPaid;
+      },
+      set(value) {
+        this.$store.commit('studio/SET_VIDEO_ATTR', {
+          key: 'isPaid',
           value: value,
         });
       },

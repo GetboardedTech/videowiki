@@ -44,9 +44,18 @@
         <div class="vx-row justify-end w-1/3">
           <div class="mr-3">
             <vs-button
+              v-if="!this.$store.state.isWalletConnected"
               class="bg-custom-purple text-base font-bold hidden lg:block"
               type="filled"
+              @click="connect"
               >Connect Wallet</vs-button
+            >
+            <vs-button
+              v-else
+              class="bg-custom-purple text-base font-bold hidden lg:block"
+              type="filled"
+              @click="disconnect"
+              >Disconnect</vs-button
             >
           </div>
           <div>
@@ -69,11 +78,10 @@
 <script>
 import ProfileDropDown from './components/ProfileDropDown.vue';
 import { mapState } from 'vuex';
-
 export default {
   name: 'the-navbar-horizontal',
   components: {
-    ProfileDropDown,
+    ProfileDropDown
   },
   data() {
     return {
@@ -87,7 +95,16 @@ export default {
     handleLogin() {
       this.$router.push('/login');
     },
-  },
+    connect() {
+      this.$store.dispatch('connectWallet');
+    },
+    disconnect() {
+      this.$store.dispatch('disconnectWallet');
+    },
+    buy() {
+      this.$store.dispatch('buyContent');
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

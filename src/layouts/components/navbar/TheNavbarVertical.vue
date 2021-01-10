@@ -32,13 +32,29 @@
         <!--<search-bar />-->
 
         <!--        <notification-drop-down />-->
-        <profile-drop-down v-if="accessToken" />
+        <div class="flex mr-4">
+          <vs-button
+            v-if="!this.$store.state.isWalletConnected"
+            class="bg-custom-purple text-base font-bold"
+            type="filled"
+            @click="connect"
+            >Connect Wallet</vs-button
+          >
+          <vs-button
+            v-else
+            class="bg-custom-purple text-base font-bold"
+            type="filled"
+            @click="disconnect"
+            >Disconnect</vs-button
+          >
+        </div>
+        <profile-drop-down v-if="isUserLoggedIn()" />
         <vs-button
           v-else
-          class="bg-custom-purple"
+          class="bg-custom-purple font-bold"
           @click="$store.commit('TOGGLE_LOGIN_POPUP', true)"
           type="filled"
-          >Login / Register</vs-button
+          >Login</vs-button
         >
       </vs-navbar>
     </div>
@@ -98,6 +114,12 @@ export default {
   methods: {
     showSidebar() {
       this.$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE_STUDIO', true);
+    },
+    connect() {
+      this.$store.dispatch('connectWallet');
+    },
+    disconnect() {
+      this.$store.dispatch('disconnectWallet');
     },
   },
 };

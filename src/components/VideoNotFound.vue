@@ -28,7 +28,7 @@
         <div class="w-1/5 p-3">
           <vx-card
             class="effect-card bg-primary text-white"
-            @click="showEffectModal = false"
+            @click="selectImage(currentUploadedImage, 'none')"
           >
             <div class="-m-3 text-center">
               <vs-icon icon="not_interested" size="45px" />

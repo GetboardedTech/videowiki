@@ -15,7 +15,9 @@ const getDefaultState = () => {
       srcLang: 'en',
       image: '',
       url: '',
-      published_id: null
+      published_id: null,
+      isPaid: false,
+      txData: null
     },
     videoScript: '',
     backgroundMusic: {},

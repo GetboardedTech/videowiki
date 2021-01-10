@@ -80,6 +80,9 @@ export default {
     /* isPublished() {
       return this.$store.state.studio.publishStatus;
     }, */
+    isPaid() {
+      return this.$store.state.studio.video.isPaid;
+    },
     totalScenes() {
       return Object.keys(this.$store.state.studio.scenes).length;
     },
@@ -110,7 +113,7 @@ export default {
       const videoData = {
         videos: this.videos,
         task_id: this.task_id,
-        bgm: this.$store.state.studio.backgroundMusic.url || null
+        bgm: this.$store.state.studio.backgroundMusic.url || null,
       };
       try {
         const apiResponse = await this.$store.dispatch(
@@ -156,12 +159,32 @@ export default {
       const userInfo = this.$store.state.AppActiveUser;
       return userInfo.username;
     },
-    handleVideoSubmit(saveLater) {
+    async handleVideoSubmit(saveLater) {
       if (this.isUserLoggedIn()) {
         const title = this.$store.state.studio.video.title;
         const desc = this.$store.state.studio.video.description;
         if (title !== '' && desc !== '') {
-          this.submitVideo(saveLater);
+          //this.submitVideo(saveLater);
+          if (this.isPaid) {
+            if (this.$store.state.isWalletConnected) {
+              const payload = {
+                author: this.getUserName(),
+                metaData:{
+                  url: this.getVideoLink,
+                  title: title
+                }
+              };
+              await this.$store.dispatch('publishToOcean', payload);
+              this.submitVideo(saveLater);
+            } else {
+              this.$vs.notify({
+                title: 'Connect your wallet first',
+                color: 'primary',
+              });
+            }
+          } else {
+            this.submitVideo(saveLater);
+          }
         } else {
           this.$vs.notify({
             title: 'Input Missing',
@@ -203,17 +226,48 @@ export default {
       this.$store
         .dispatch('studio/publishVideo', data)
         .then((res) => {
-          this.$Progress.finish();
-          this.$vs.loading.close();
-          if (saveLater) this.$router.push('/myvideos');
-          else this.$router.push('/dashboard');
-          this.$vs.notify({
-            title: 'Success',
-            text: saveLater
-              ? 'Video Saved Successfully'
-              : 'Video Published Successfully',
-            color: 'success',
-          });
+          if (!saveLater) {
+            const payload = {
+              exchange_key: video.txData.exchangeId,
+              dod: video.txData.did,
+              dataToken: video.txData.dataTokenAddress,
+              paid: video.isPaid,
+              video_id: res.data.id,
+            };
+            console.log(payload);
+            this.$store
+              .dispatch('studio/postTxData', payload)
+              .then(() => {
+                this.$Progress.finish();
+                this.$vs.loading.close();
+                if (saveLater) this.$router.push('/myvideos');
+                else this.$router.push('/dashboard');
+                this.$vs.notify({
+                  title: 'Success',
+                  text: 'Video Published Successfully',
+                  color: 'success',
+                });
+              })
+              .catch((err) => {
+                console.log(err);
+                this.$Progress.fail();
+                this.$vs.loading.close();
+                this.$vs.notify({
+                  title: 'Error',
+                  text: 'Video Tx data was not saved',
+                  color: 'danger',
+                });
+              });
+          } else {
+            this.$Progress.finish();
+            this.$vs.loading.close();
+            this.$router.push('/myvideos');
+            this.$vs.notify({
+              title: 'Success',
+              text: 'Video Saved Successfully',
+              color: 'success',
+            });
+          }
         })
         .catch((err) => {
           console.log(err);

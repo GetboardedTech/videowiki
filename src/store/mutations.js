@@ -128,6 +128,14 @@ const mutations = {
 
   LOGOUT(state, payload) {
     state.AppActiveUser = payload;
+  },
+
+  CONNECT(state) {
+    state.isWalletConnected = true;
+  },
+
+  DISCONNECT(state) {
+    state.isWalletConnected = false;
   }
 };
 
