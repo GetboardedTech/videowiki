@@ -11,7 +11,7 @@
 
  step2:
 
- in browser run this " localhost:8000 "
+    in browser run this " localhost:8000 "
 
   step3 : create video
 
@@ -38,11 +38,11 @@ This project using apis that is implemented in django and hosted on aws at domai
               5. Create a FixedRateExchange
               6. Alllow videowiki to exchange your crypto
 
-5. Congratulations your content is now published
+    5. Congratulations your content is now published
 
         Note : For the moment a fixed exchange is created with 1 datatoken costing 10OCEAN. This will be further upgraded to facilitate staking and other associated features
 
-    step 5: Buying :
+   step 5: Buying :
 
         1. Connect your wallet. Point to rinkeybi and make sure it have some test eth and min 10OCEAN
         2. Choose the content of your choice.
