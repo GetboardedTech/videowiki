@@ -71,7 +71,7 @@ export default {
         top: 5,
         left: 0,
         blur: 4,
-        opacity: 0.10
+        opacity: 0.1
       },
       toolbar: {
         show: false
@@ -110,5 +110,4 @@ export default {
       x: { show: false }
     }
   }
-
-}
+};

@@ -1,9 +1,9 @@
 <template>
   <div class="vx-col w-full sm:w-1/2 md:w-1/3 lg:w-1/5 mb-base">
-    <vx-card class="video-card-inner cursor-pointer" @click="detailView">
+    <vx-card class="video-card-inner cursor-pointer">
       <div slot="no-body" class="relative">
         <img
-          :src="`${baseUrl}/${prop.thumbnail}`"
+          :src="baseUrl + prop.thumbnail"
           @error="$event.target.src = defaultImg"
           alt="Not Found"
           class="h-48"
@@ -12,7 +12,7 @@
         <vs-chip class="video-length">{{ prop.duration }}</vs-chip>
       </div>
       <div class="card-body">
-        <div v-if="!user" class="flex items-center justify-between">
+        <!--div v-if="!user" class="flex items-center justify-between">
           <vs-row vs-type="flex" vs-align="center">
             <vx-tooltip text="Coming Soon!">
               <vs-button
@@ -44,7 +44,7 @@
             @click.stop="editVideo"
             >Edit
           </vs-button>
-        </div>
+        </div-->
         <div
           class="mb-2 text-sm font-semibold"
           :title="prop.title === '' ? 'Video has no title' : prop.title"
@@ -69,34 +69,6 @@
         </div>
       </div>
     </vx-card>
-    <vs-popup title="Details" :active.sync="showTxModal">
-      <div class="flex justify-between">
-        <div>
-          <h4>{{ this.prop.title }}</h4>
-          <p>{{ this.prop.description }}</p>
-        </div>
-        <div>
-          <div class="text-2xl" v-if="!this.$store.state.isWalletConnected">
-            Connect Wallet !
-          </div>
-          <div v-else class="flex">
-            <vs-button
-              type="filled"
-              class="mr-2"
-              @click="buyContent"
-              :disabled="buyInProcess"
-              >Buy</vs-button
-            >
-            <vs-button
-              type="filled"
-              @click="downloadAsset"
-              :disabled="downloadInProgress"
-              >Download</vs-button
-            >
-          </div>
-        </div>
-      </div>
-    </vs-popup>
   </div>
 </template>
 
@@ -125,12 +97,8 @@ export default {
         'Sep',
         'Oct',
         'Nov',
-        'Dec',
-      ],
-      videoTxData: {},
-      showTxModal: false,
-      buyInProcess: false,
-      downloadInProgress: false,
+        'Dec'
+      ]
     };
   },
   computed: {
@@ -146,87 +114,36 @@ export default {
     getUploadTime() {
       const date = Date.now();
       const uploadDate = new Date(this.prop.publish_time);
-      let diff = Math.ceil(Math.abs(date - uploadDate) / 1000);
+      const diff = Math.ceil(Math.abs(date - uploadDate) / 1000);
       if (diff < 60) {
         return diff < 30 ? `Just Now` : `${diff} secs ago`;
       } else if (diff < 60 * 60) {
-        let mins = Math.round(diff / 60);
+        const mins = Math.round(diff / 60);
         return mins === 1 ? `${mins} min ago` : `${mins} mins ago`;
       } else if (diff < 60 * 60 * 24) {
-        let hours = Math.round(diff / (60 * 60));
+        const hours = Math.round(diff / (60 * 60));
         return hours === 1 ? `${hours} hr ago` : `${hours} hrs ago`;
       } else if (diff <= 60 * 60 * 24 * 6.5) {
-        let days = Math.round(diff / (60 * 60 * 24));
+        const days = Math.round(diff / (60 * 60 * 24));
         return days === 1 ? `${days} day ago` : `${days} days ago`;
       } else if (diff < 60 * 60 * 24 * 7 * 4) {
-        let weeks = Math.round(diff / (60 * 60 * 24 * 7));
+        const weeks = Math.round(diff / (60 * 60 * 24 * 7));
         return weeks === 1 ? `${weeks} week ago` : `${weeks} weeks ago`;
       } else if (diff < 60 * 60 * 24 * 7 * 4 * 12) {
-        let months = Math.round(diff / (60 * 60 * 24 * 7 * 4));
+        const months = Math.round(diff / (60 * 60 * 24 * 7 * 4));
         return months === 1 ? `${months} month ago` : `${months} months ago`;
       } else {
-        let years = Math.round(diff / (60 * 60 * 24 * 7 * 4 * 12));
+        const years = Math.round(diff / (60 * 60 * 24 * 7 * 4 * 12));
         return years === 1 ? `${years} year ago` : `${years} years ago`;
       }
-    },
+    }
   },
   methods: {
-    detailView() {
-      if (this.prop.paid) {
-        this.getVideoTxData();
-        this.showTxModal = true;
-      } else {
-        const route = this.$router.resolve({
-          name: 'Video View',
-          params: { slug: this.prop.id },
-          query: { url: this.prop.video },
-        });
-        window.open(route.href, '_blank');
-      }
-    },
-    async buyContent() {
-      this.buyInProcess = true;
-      const purchase = await this.$store.dispatch(
-        'initiateBuy',
-        this.videoTxData.exchange_key
-      );
-      if (!purchase) {
-        this.$vs.notify({
-          title: 'Error',
-          text: 'Cannot process buy request',
-          color: 'danger',
-        });
-      }
-      this.buyInProcess = false;
-    },
-    async downloadAsset() {
-      this.downloadInProgress = true;
-      await this.$store.dispatch('startDownload', {
-        did: this.videoTxData.dod,
-        dta: this.videoTxData.dataToken,
-      });
-      this.downloadInProgress = false;
-    },
-    getVideoTxData() {
-      const url = `/transaction/oceanbuy?video_id=${this.prop.id}`;
-      /*this.$vs.loading({
-        background: 'transparent',
-        container: '#div-with-loading',
-      });
-      this.isLoading = true;*/
-      this.getRequest(url, this.handleResponse);
-    },
-    handleResponse(apiResponse) {
-      /* this.$vs.loading.close('#div-with-loading > .con-vs-loading');
-      this.isLoading = false; */
-      this.videoTxData = apiResponse.data;
-      console.log(this.videoTxData);
-    },
     editVideo() {
       this.$store.commit('studio/toggleText');
       this.$router.replace(`/studio/${this.prop.id}`);
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

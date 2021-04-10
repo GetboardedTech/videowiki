@@ -14,7 +14,7 @@
       layoutTypeClass,
       navbarClasses,
       footerClasses,
-      { 'no-scroll': isAppPage },
+      { 'no-scroll': isAppPage }
     ]"
   >
     <v-nav-menu-1
@@ -35,7 +35,7 @@
           :navbarType="navbarType"
           :class="[
             { 'text-white': isNavbarDark && !isThemeDark },
-            { 'text-base': !isNavbarDark && isThemeDark },
+            { 'text-base': !isNavbarDark && isThemeDark }
           ]"
         />
 
@@ -44,7 +44,7 @@
         <h-nav-menu
           :class="[
             { 'text-white': isNavbarDark && !isThemeDark },
-            { 'text-base': !isNavbarDark && isThemeDark },
+            { 'text-base': !isNavbarDark && isThemeDark }
           ]"
           :navMenuItems="navMenuItems"
         />
@@ -55,7 +55,7 @@
           :navbarColor="navbarColor"
           :class="[
             { 'text-white': isNavbarDark && !isThemeDark },
-            { 'text-base': !isNavbarDark && isThemeDark },
+            { 'text-base': !isNavbarDark && isThemeDark }
           ]"
         />
       </template>
@@ -63,7 +63,7 @@
 
       <div class="content-wrapper">
         <div class="router-view">
-          <div class="router-content">
+          <div :class="{ 'router-content': !insideIframe }">
             <transition :name="routerTransition">
               <div
                 v-if="$route.meta.breadcrumb || $route.meta.pageTitle"
@@ -73,7 +73,7 @@
                   class="content-area__heading"
                   :class="{
                     'pr-4 border-0 md:border-r border-solid border-grey-light':
-                      $route.meta.breadcrumb,
+                      $route.meta.breadcrumb
                   }"
                 >
                   <h2 class="mb-1">{{ routeTitle }}</h2>
@@ -144,7 +144,7 @@
                 <router-view
                   @changeRouteTitle="changeRouteTitle"
                   @setAppClasses="
-                    (classesStr) => $emit('setAppClasses', classesStr)
+                    classesStr => $emit('setAppClasses', classesStr)
                   "
                 />
               </transition>
@@ -173,7 +173,7 @@ export default {
     TheFooter,
     TheNavbarHorizontal,
     TheNavbarVertical,
-    VNavMenu1,
+    VNavMenu1
   },
   data() {
     return {
@@ -183,7 +183,7 @@ export default {
       navbarType: themeConfig.navbarType || 'floating',
       navMenuItems: navMenuItems,
       routerTransition: themeConfig.routerTransition || 'none',
-      routeTitle: this.$route.meta.pageTitle,
+      routeTitle: this.$route.meta.pageTitle
     };
   },
   watch: {
@@ -196,9 +196,12 @@ export default {
     },
     '$store.state.mainLayoutType'(val) {
       this.setNavMenuVisibility(val);
-    },
+    }
   },
   computed: {
+    insideIframe() {
+      return this.$store.state.insideIframe;
+    },
     bodyOverlay() {
       return this.$store.state.bodyOverlay;
     },
@@ -220,7 +223,7 @@ export default {
       return {
         'footer-hidden': this.footerType == 'hidden',
         'footer-sticky': this.footerType == 'sticky',
-        'footer-static': this.footerType == 'static',
+        'footer-static': this.footerType == 'static'
       };
     },
     isAppPage() {
@@ -240,7 +243,7 @@ export default {
         'navbar-hidden': this.navbarType == 'hidden',
         'navbar-sticky': this.navbarType == 'sticky',
         'navbar-static': this.navbarType == 'static',
-        'navbar-floating': this.navbarType == 'floating',
+        'navbar-floating': this.navbarType == 'floating'
       };
     },
     verticalNavMenuWidth() {
@@ -248,7 +251,7 @@ export default {
     },
     windowWidth() {
       return this.$store.state.windowWidth;
-    },
+    }
   },
   methods: {
     changeRouteTitle(title) {
@@ -269,7 +272,7 @@ export default {
       } else {
         this.$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE_STUDIO', true);
       }
-    },
+    }
   },
   created() {
     const color =
@@ -278,6 +281,6 @@ export default {
         : this.navbarColor;
     this.updateNavbarColor(color);
     this.setNavMenuVisibility(this.$store.state.mainLayoutType);
-  },
+  }
 };
 </script>

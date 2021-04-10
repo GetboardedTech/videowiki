@@ -1,7 +1,11 @@
 <template>
   <vs-card class="cardx card-dimension custom-border-box">
     <div slot="media" class="thumbnail">
-      <img src="@/assets/images/pages/card-image-4.jpg" height="208" width="368" />
+      <img
+        src="@/assets/images/pages/card-image-4.jpg"
+        height="208"
+        width="368"
+      />
       <vs-chip class="video-length">31:20</vs-chip>
     </div>
     <div>

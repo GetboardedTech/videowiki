@@ -55,13 +55,11 @@
           size="large"
           class="bg-custom-purple text-base font-bold w-full"
           target="_blank"
-          :href="`https://${getClassroomLink}`"
+          :href="getClassroomLink"
+          @click="startClassModal = false"
           >Create my Classroom</vs-button
         >
       </div>
-    </vs-popup>
-    <vs-popup title="Login Required" :active.sync="loginPopup">
-      <p>Please login to use this feature</p>
     </vs-popup>
     <!----------->
     <div class="section flex">
@@ -186,7 +184,7 @@
           Rapidly developed, working, and ready for use.
         </p>
         <div class="text-left">
-          <vs-collapse accordion type="margin">
+          <vs-collapse accordion type="margin" ref="vsCollapse">
             <!--template v-for="(item, idx) in faqList"-->
             <vs-collapse-item
               :ref="`collapse_1`"
@@ -200,14 +198,14 @@
                   class="mr-5 font-bold"
                   :class="{
                     'text-custom-purple': !expand(1),
-                    'text-black': expand(1),
+                    'text-black': expand(1)
                   }"
                 />
                 <span
                   class="font-medium text-xl"
                   :class="{
                     'text-custom-purple': !expand(1),
-                    'text-black': expand(1),
+                    'text-black': expand(1)
                   }"
                   >Why VideoWiki.pt</span
                 >
@@ -265,14 +263,14 @@
                   class="mr-5 font-bold"
                   :class="{
                     'text-custom-purple': !expand(2),
-                    'text-black': expand(2),
+                    'text-black': expand(2)
                   }"
                 />
                 <span
                   class="font-medium text-xl"
                   :class="{
                     'text-custom-purple': !expand(2),
-                    'text-black': expand(2),
+                    'text-black': expand(2)
                   }"
                   >What's new in VideoWiki.pt</span
                 >
@@ -310,14 +308,14 @@
                   class="mr-5 font-bold"
                   :class="{
                     'text-custom-purple': !expand(3),
-                    'text-black': expand(3),
+                    'text-black': expand(3)
                   }"
                 />
                 <span
                   class="font-medium text-xl"
                   :class="{
                     'text-custom-purple': !expand(3),
-                    'text-black': expand(3),
+                    'text-black': expand(3)
                   }"
                   >Creating content using VideoWiki.pt</span
                 >
@@ -373,14 +371,14 @@
                   class="mr-5 font-bold"
                   :class="{
                     'text-custom-purple': !expand(4),
-                    'text-black': expand(4),
+                    'text-black': expand(4)
                   }"
                 />
                 <span
                   class="font-medium text-xl"
                   :class="{
                     'text-custom-purple': !expand(4),
-                    'text-black': expand(4),
+                    'text-black': expand(4)
                   }"
                   >Earning from VideoWiki.pt</span
                 >
@@ -418,14 +416,14 @@
                   class="mr-5 font-bold"
                   :class="{
                     'text-custom-purple': !expand(5),
-                    'text-black': expand(5),
+                    'text-black': expand(5)
                   }"
                 />
                 <span
                   class="font-medium text-xl"
                   :class="{
                     'text-custom-purple': !expand(5),
-                    'text-black': expand(5),
+                    'text-black': expand(5)
                   }"
                   >Is cryptocurrency any different from real money?</span
                 >
@@ -470,14 +468,14 @@
                   class="mr-5 font-bold"
                   :class="{
                     'text-custom-purple': !expand(6),
-                    'text-black': expand(6),
+                    'text-black': expand(6)
                   }"
                 />
                 <span
                   class="font-medium text-xl"
                   :class="{
                     'text-custom-purple': !expand(6),
-                    'text-black': expand(6),
+                    'text-black': expand(6)
                   }"
                   >Do I have to pay for the course?</span
                 >
@@ -531,13 +529,12 @@ export default {
   name: 'Classoom',
   components: {
     VxCard,
-    Reviews,
+    Reviews
   },
   data() {
     return {
       expand: Function,
       startClassModal: false,
-      loginPopup: false,
       isLocked: false,
       classroomName: '',
       userList: [
@@ -545,26 +542,26 @@ export default {
           name: 'AB John',
           desc: 'Teacher',
           review:
-            'At our University, VideoWiki gives the teachers ability to digitize their learning content without a technical knowledge or using advanced tools.',
+            'At our University, VideoWiki gives the teachers ability to digitize their learning content without a technical knowledge or using advanced tools.'
         },
         {
           name: 'CD Paula',
           desc: 'L&D HR',
           review:
-            'VideoWiki could find use-cases in many segments where content is generated rapidly, modified, and distributed in usual media formats.',
+            'VideoWiki could find use-cases in many segments where content is generated rapidly, modified, and distributed in usual media formats.'
         },
         {
           name: 'Rui Couto',
           desc: 'WPC Ambassador',
           review:
-            'The project has the potential to become a Wikipedia for media. Creating the next editable encyclopaedia for video collaborations instead of text.',
+            'The project has the potential to become a Wikipedia for media. Creating the next editable encyclopaedia for video collaborations instead of text.'
         },
         {
           name: 'Bhaskar Dutta',
           desc: 'BlockChain Developer',
           review:
-            'Both educational and corporate benefits could make the solution sustainable and beneficial. Decentralization of such solution also makes it a trusted, transparent and impartial knowledge repository.',
-        },
+            'Both educational and corporate benefits could make the solution sustainable and beneficial. Decentralization of such solution also makes it a trusted, transparent and impartial knowledge repository.'
+        }
       ],
       faqList: [
         {
@@ -574,42 +571,42 @@ export default {
           Collaborative contribution: Every tutorial becomes outdated after a point of time and requires amendments at regular intervals. In most platforms, this becomes the sole responsibility of the creator. VideoWiki enables and encourages collaborative effort in making e-learning modules. Everyone can fork and contribute to an existing module ensuring the contents are up to date and VideoWiki’s versioning system manages that each fork is managed properly. At the same time, every contributor is rewarded with Crypto Coins.
           
           Feedback and Response System: VideoWiki provides the opportunity of conducting virtual classes where students get the opportunity to interact directly with the teachers and discuss the topic at hand. This enables the teachers to get feedback and clear any confusion regarding the discussed curriculum.`,
-          closed: true,
+          closed: true
         },
         {
           title: `What's new in VideoWiki.pt`,
           description: 'Add sharing, feedback and communication options.',
-          closed: true,
+          closed: true
         },
         {
           title: 'Creating content using VideoWiki.pt',
           description:
             'Adding gamification capabilities with new sensors for advances sciences',
-          closed: true,
+          closed: true
         },
         {
           title: 'Earning from VideoWiki.pt',
           description:
             'Bring the global learning at a relatively more standarized norm',
-          closed: true,
+          closed: true
         },
         {
           title: 'Is cryptocurrency any different from real money?',
           description:
             'Reduce global inequalities on access to education and qualification gaps.',
-          closed: true,
+          closed: true
         },
         {
           title: 'Do I have to pay for the course?',
           description:
             'One world education and immersive with equal opportunities for all.',
-          closed: true,
-        },
-      ],
+          closed: true
+        }
+      ]
     };
   },
   mounted() {
-    this.expand = (idx) => this.isClosed(idx);
+    this.expand = idx => this.isClosed(idx);
     this.$refs.custom_modal.$el.childNodes[1].childNodes[0].style.display =
       'none';
     this.$refs.custom_modal.$el.childNodes[1].style.width = '620px';
@@ -620,11 +617,11 @@ export default {
   computed: {
     ...mapState('auth', ['isUserLoggedIn']),
     getClassroomLink() {
-      return `class.videowiki.pt/b/start_class?name=User&email=${this.userInfo.username}&room_name=${this.classroomName}`;
+      return `https://class.videowiki.pt/b/start_class?name=${this.userInfo.first_name}&email=${this.userInfo.username}`; // &room_name=${this.classroomName}`;
     },
     userInfo() {
       return this.$store.state.AppActiveUser;
-    },
+    }
   },
   methods: {
     isClosed(idx) {
@@ -632,10 +629,18 @@ export default {
       return false;
     },
     checkLoginStatus() {
-      if (this.isUserLoggedIn()) this.startClassModal = true;
-      else this.$store.commit('TOGGLE_LOGIN_POPUP', true);
-    },
+      if (this.isUserLoggedIn()) {
+        window.open(this.getClassroomLink, '_blank');
+      } else this.$store.commit('TOGGLE_LOGIN_POPUP', true);
+    }
   },
+  beforeDestroy() {
+    if (this.$refs.vsCollapse) {
+      for (const collapseItem of this.$refs.vsCollapse.$children) {
+        window.removeEventListener('resize', collapseItem.changeHeight);
+      }
+    }
+  }
 };
 </script>
 

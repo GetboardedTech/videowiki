@@ -12,42 +12,55 @@
         </div>
         <vs-tabs>
           <vs-tab label="Narration">
-            <div
-              v-for="(s, indexs) in $store.state.studio.scenes"
-              :key="indexs"
+            <component
+              :is="scrollbarTag"
+              ref="verticalNavMenuPs"
+              class="scroll-area scroll-cards"
+              :settings="settings"
+              :key="$vs.rtl"
             >
-              <vx-card
-                :id="'scene_card_panel' + indexs"
-                class="scene-card items-left mb-2 custom-shadow"
+              <div
+                v-for="(s, indexs) in $store.state.studio.scenes"
+                :key="indexs"
               >
-                <h5 class="mb-3" style="margin-left: 0px">
-                  Scene {{ parseInt(indexs) + 1 }}
-                </h5>
-                <p class="items-left mb-base" style="white-space: normal">
-                  {{ s }}
-                </p>
-                <ul
-                  v-if="recordedAudios[indexs]"
-                  :class="'playlist_' + indexs"
-                  class="recordings"
-                  style="margin-left: -5%"
+                <vx-card
+                  :id="'scene_card_panel' + indexs"
+                  class="scene-card items-left mb-2 custom-shadow"
+                  @click="scrollToScene(indexs)"
                 >
-                  <li>
-                    <audio
-                      :src="recordedAudios[indexs]"
-                      type="audio/mp3"
-                      controls
-                    >
-                      Your browser does not support the audio element.
-                    </audio>
-                  </li>
-                </ul>
-              </vx-card>
-            </div>
+                  <h5 class="mb-3" style="margin-left: 0px">
+                    Scene {{ parseInt(indexs) + 1 }}
+                  </h5>
+                  <p
+                    class="items-left"
+                    style="white-space: normal; overflow: hidden"
+                  >
+                    {{ s }}
+                  </p>
+                  <ul
+                    v-if="recordedAudios[indexs]"
+                    :class="'playlist_' + indexs"
+                    class="recordings mt-2"
+                    style="margin-left: -5%"
+                  >
+                    <li>
+                      <audio
+                        :src="recordedAudios[indexs]"
+                        type="audio/mp3"
+                        controls
+                        style="height:42px"
+                      >
+                        Your browser does not support the audio element.
+                      </audio>
+                    </li>
+                  </ul>
+                </vx-card>
+              </div>
+            </component>
           </vs-tab>
           <vs-tab label="Music">
             <vx-card
-              class="text-white mb-base"
+              class="text-white mb-4"
               :class="backgroundMusic.url ? 'bg-success' : 'bg-danger'"
             >
               <div
@@ -87,43 +100,63 @@
                 <p>No track selected</p>
               </div>
             </vx-card>
-            <div v-if="audioList.length === 0">
+            <div class="genre_list_wrapper">
+              <div class="text-left mb-4">
+                <label for="genre_list">Select Genre</label>
+                <v-select
+                  :options="options"
+                  :reduce="label => label.value"
+                  id="genre_list"
+                  class="genre-list"
+                  :clearable="false"
+                  :value="selectedGenre"
+                  @input="getMusicList"
+                  label="label"
+                ></v-select>
+              </div>
+              <!--div v-if="audioList.length === 0">
               <p style="white-space: normal" class="font-semibold">
-                No relevant music tracks found
+                Select genre to get music tracks
               </p>
-            </div>
-            <div v-else class="scroll-area overflow-auto">
-              <!--p class="mb-3">Click to add music to the Current Scene</p-->
-              <template v-for="(audio, indexa) in audioList">
-                <div
-                  title="Click to select"
-                  class="flex justify-between mb-2 p-1 cursor-pointer hover:bg-primary hover:text-white"
-                  @mouseenter="playAudio(`track_${indexa}`, `loader_${indexa}`)"
-                  @mouseleave="
-                    pauseAudio(`track_${indexa}`, `loader_${indexa}`)
-                  "
-                  @click="selectAudio(audio)"
-                  :key="indexa"
-                >
-                  <div class="text-left w-2/3 flex items-center">
-                    <vs-icon icon="audiotrack" class="mr-2" />
-                    <p
-                      class="font-semibold truncate"
-                      style="white-space: normal"
-                    >
-                      {{ audio.title }}
-                    </p>
-                  </div>
+            </div-->
+              <div
+                v-if="audioList.length > 0"
+                class="scroll-area scroll-default overflow-auto"
+              >
+                <!--p class="mb-3">Click to add music to the Current Scene</p-->
+                <template v-for="(audio, indexa) in audioList">
                   <div
-                    class="vs-con-loading__container audio-animation"
-                    :id="`loader_${indexa}`"
-                  ></div>
-                  <audio class="audio-el hidden" :id="`track_${indexa}`">
-                    <source :src="audio.url" type="audio/mp3" />
-                    Your browser does not support the audio element.
-                  </audio>
-                </div>
-              </template>
+                    title="Click to select"
+                    class="flex justify-between mb-2 p-1 cursor-pointer hover:bg-primary hover:text-white"
+                    @mouseenter="
+                      playAudio(`track_${indexa}`, `loader_${indexa}`)
+                    "
+                    @mouseleave="
+                      pauseAudio(`track_${indexa}`, `loader_${indexa}`)
+                    "
+                    @click="selectAudio(audio)"
+                    :key="indexa"
+                  >
+                    <div class="text-left w-2/3 flex items-center">
+                      <vs-icon icon="audiotrack" class="mr-2" />
+                      <p
+                        class="font-semibold truncate"
+                        style="white-space: normal"
+                      >
+                        {{ audio.title }}
+                      </p>
+                    </div>
+                    <div
+                      class="vs-con-loading__container audio-animation"
+                      :id="`loader_${indexa}`"
+                    ></div>
+                    <audio class="audio-el hidden" :id="`track_${indexa}`">
+                      <source :src="audio.url" type="audio/mp3" />
+                      Your browser does not support the audio element.
+                    </audio>
+                  </div>
+                </template>
+              </div>
             </div>
           </vs-tab>
           <vs-tab label="Uploads">
@@ -142,38 +175,43 @@
                 @click="chooseFile"
                 :disabled="uploadInProgress"
               >
-                Upload Audio
+                Upload Music Track
               </vs-button>
             </div>
-            <template v-for="(audio, indexau) in uploadedAudioList">
-              <div
-                title="Click to select"
-                class="items-left flex justify-between items-center mb-2 p-1 cursor-pointer hover:bg-primary hover:text-white"
-                @mouseenter="
-                  playAudio(`u_track_${indexau}`, `u_loader_${indexau}`)
-                "
-                @mouseleave="
-                  pauseAudio(`u_track_${indexau}`, `u_loader_${indexau}`)
-                "
-                @click="selectAudio(audio)"
-                :key="indexau"
-              >
-                <div class="text-left w-2/3 flex items-center">
-                  <vs-icon icon="audiotrack" class="mr-2" />
-                  <p class="font-semibold truncate" style="white-space: normal">
-                    {{ audio.title }}
-                  </p>
-                </div>
+            <div class="scroll-area scroll-default overflow-auto">
+              <template v-for="(audio, indexau) in uploadedAudioList">
                 <div
-                  class="vs-con-loading__container audio-animation"
-                  :id="`u_loader_${indexau}`"
-                ></div>
-                <audio class="audio-el hidden" :id="`u_track_${indexau}`">
-                  <source :src="audio.url" type="audio/mp3" />
-                  Your browser does not support the audio element.
-                </audio>
-              </div>
-            </template>
+                  title="Click to select"
+                  class="items-left flex justify-between items-center mb-2 p-1 cursor-pointer hover:bg-primary hover:text-white"
+                  @mouseenter="
+                    playAudio(`u_track_${indexau}`, `u_loader_${indexau}`)
+                  "
+                  @mouseleave="
+                    pauseAudio(`u_track_${indexau}`, `u_loader_${indexau}`)
+                  "
+                  @click="selectAudio(audio)"
+                  :key="indexau"
+                >
+                  <div class="text-left w-2/3 flex items-center">
+                    <vs-icon icon="audiotrack" class="mr-2" />
+                    <p
+                      class="font-semibold truncate"
+                      style="white-space: normal"
+                    >
+                      {{ audio.title }}
+                    </p>
+                  </div>
+                  <div
+                    class="vs-con-loading__container audio-animation"
+                    :id="`u_loader_${indexau}`"
+                  ></div>
+                  <audio class="audio-el hidden" :id="`u_track_${indexau}`">
+                    <source :src="audio.url" type="audio/mp3" />
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              </template>
+            </div>
           </vs-tab>
         </vs-tabs>
       </div>
@@ -182,8 +220,16 @@
 </template>
 
 <script>
+import VuePerfectScrollbar from 'vue-perfect-scrollbar';
+import vSelect from 'vue-select';
+import { ajaxCallMixin } from '../../../../http/HttpCommon';
 export default {
   name: 'MusicPanel',
+  mixins: [ajaxCallMixin],
+  components: {
+    VuePerfectScrollbar,
+    vSelect
+  },
   data() {
     return {
       uploadInProgress: false,
@@ -191,8 +237,35 @@ export default {
         // perfectScrollbar settings
         maxScrollbarLength: 60,
         wheelSpeed: 1,
-        swipeEasing: true,
+        swipeEasing: true
       },
+      selectedGenre: '',
+      options: [
+        { value: 'all', label: 'All' },
+        { value: 'ambient', label: 'Ambient' },
+        { value: 'blues', label: 'Blues' },
+        { value: 'bumpers & stingers', label: 'Bumpers & Stingers' },
+        { value: 'chill out', label: 'Chill Out' },
+        { value: 'cinematic', label: 'Cinematic' },
+        { value: 'classical', label: 'Classical' },
+        { value: 'corporate', label: 'Corporate' },
+        { value: 'country', label: 'Country' },
+        { value: 'electronic', label: 'Electronic' },
+        { value: 'folk', label: 'Folk' },
+        { value: 'hip hop', label: 'Hip Hop' },
+        {
+          value: 'holidays & special events',
+          label: 'Holidays & Special Events'
+        },
+        { value: 'horror', label: 'Horror' },
+        { value: 'jazz', label: 'Jazz' },
+        { value: 'kids and family', label: 'Kids & Family' },
+        { value: 'pop', label: 'Pop' },
+        { value: 'religious', label: 'Religious' },
+        { value: 'rhythm & blues', label: 'Rhythm & Blues' },
+        { value: 'rock', label: 'Rock' },
+        { value: 'world', label: 'World' }
+      ]
     };
   },
   computed: {
@@ -208,8 +281,39 @@ export default {
     backgroundMusic() {
       return this.$store.state.studio.backgroundMusic;
     },
+    scrollbarTag() {
+      return this.$store.getters.scrollbarTag;
+    }
+  },
+  mounted() {
+    this.getMusicList('all');
   },
   methods: {
+    getMusicList(genre) {
+      this.selectedGenre = genre;
+      const url = `/api/music?genre=${genre}`;
+      /* this.$vs.loading({
+        container: `#buy-download`,
+        background: '#fff',
+        color: 'primary',
+        scale: 0.8
+      }); */
+      // this.isLoading = true;
+      this.getRequest(url, this.loadAudioList);
+    },
+    loadAudioList(apiResponse) {
+      this.$store.commit('studio/setAudios', apiResponse.data);
+    },
+    scrollToScene(sceneNumber) {
+      var element = document.getElementById(`scene_card_${sceneNumber}`);
+      const headerOffset = 80;
+      var elementPosition = element.getBoundingClientRect().top;
+      var offsetPosition = elementPosition - headerOffset + window.pageYOffset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    },
     playAudio(trackId, loaderId) {
       const audioElement = document.getElementById(trackId);
       audioElement.currentTime = 0;
@@ -219,7 +323,7 @@ export default {
         type: 'sound',
         color: '#fff',
         background: 'transparent',
-        scale: 0.5,
+        scale: 0.5
       });
     },
     pauseAudio(trackId, loaderId) {
@@ -240,14 +344,14 @@ export default {
         background: 'primary',
         color: '#fff',
         container: '#upload-with-loading',
-        scale: 0.45,
+        scale: 0.45
       });
       this.$store
         .dispatch('studio/uploadMedia', selectedFile)
-        .then((url) => {
+        .then(url => {
           const dataObj = {
             title: selectedFile.name,
-            url: url,
+            url: url
           };
           this.$store.commit('studio/setUploadedAudio', dataObj);
         })
@@ -255,7 +359,7 @@ export default {
           this.$vs.notify({
             title: 'Error Occured',
             text: 'video upload failed',
-            color: 'danger',
+            color: 'danger'
           });
         })
         .finally(() => {
@@ -280,8 +384,8 @@ export default {
       ); */
       this.$store.commit('studio/skipMusic');
       this.$store.commit('studio/togglePublish');
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -291,11 +395,9 @@ export default {
   text-align: -moz-left;
   text-align: -webkit-left;
 }
-
-.scroll-area {
-  height: 220px;
+.scroll-default {
+  height: 245px;
 }
-
 ul.recordings {
   li {
     display: flex;
@@ -312,5 +414,23 @@ ul.recordings {
 .audio-animation {
   height: 30px;
   width: 30px;
+}
+.scroll-area {
+  position: relative;
+  width: 100%;
+}
+.scroll-cards {
+  height: 60vh;
+}
+.scene-card {
+  cursor: pointer;
+}
+.genre_list_wrapper {
+  height: 330px;
+}
+</style>
+<style>
+.genre-list .vs__dropdown-menu {
+  max-height: 200px !important;
 }
 </style>

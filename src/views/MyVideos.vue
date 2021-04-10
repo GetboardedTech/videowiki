@@ -44,55 +44,55 @@ export default {
   name: 'MyVideos',
   components: {
     TheHeader,
-    VideoCard,
+    VideoCard
   },
   data() {
     return {
       videoList: [],
-      isLoading: false,
+      isLoading: false
     };
   },
   computed: {
     savedVideoList() {
       return this.videoList
-        .filter((video) => video.is_save_later)
+        .filter(video => video.is_save_later)
         .slice()
         .reverse();
     },
     publishedVideoList() {
       return this.videoList
-        .filter((video) => !video.is_save_later)
+        .filter(video => !video.is_save_later)
         .slice()
         .reverse();
-    },
+    }
   },
   mounted() {
     this.getUserVideos();
   },
   methods: {
     getUserVideos() {
-      /*this.$vs.loading({
+      /* this.$vs.loading({
         background: 'transparent',
         container: '#div-with-loading',
-      });*/
+      }); */
       axios
         .get(constants.apiUrl + '/videoapi/user_videos')
-        .then((res) => {
+        .then(res => {
           this.videoList = res.data.data;
         })
         .catch(() => {
           this.$vs.notify({
             title: 'Error',
             text: 'Cannot fetch videos',
-            color: 'danger',
+            color: 'danger'
           });
         })
         .finally(() => {
-          /*this.$vs.loading.close('#div-with-loading > .con-vs-loading');
-          this.isLoading = false;*/
+          /* this.$vs.loading.close('#div-with-loading > .con-vs-loading');
+          this.isLoading = false; */
         });
-    },
-  },
+    }
+  }
 };
 </script>
 <style scoped>

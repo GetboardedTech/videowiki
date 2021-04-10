@@ -134,9 +134,10 @@ export default {
 
       if (group.submenu) {
         group.submenu.forEach(item => {
-          if ((path == item.url || routeParent == item.slug) && item.slug) {
+          if ((path === item.url || routeParent === item.slug) && item.slug) {
             active = true;
           } else if (item.submenu) {
+            // eslint-disable-next-line no-unused-expressions
             this.checkGrpChildrenActive(item) ? (active = true) : null;
           }
         });

@@ -1,15 +1,9 @@
 <template>
   <div>
-    <form>
+    <form v-if="currentTabIndex === 0">
       <vx-card :title="$t('studio.text.t1')" class="text-window">
         <div class="text-left">
           <h6>{{ $t('studio.text.t2') }}</h6>
-          <!-- <vs-input
-            :placeholder="$t('studio.text.t2')"
-            @input="updateForm('title', $event.target.value)"
-            :value="form.title"
-            class="w-full mt-3 mb-3"
-          /> -->
           <span class="text-danger text-sm" v-show="errors.has('title')">{{
             errors.first('title')
           }}</span>
@@ -19,50 +13,17 @@
             name="title"
             size="large"
             :placeholder="$t('studio.text.t2')"
-            @input="updateForm('title', $event.target.value)"
             v-model="title"
             class="w-full mt-3 mb-3 title2"
             v-validate="'required'"
             autocomplete="off"
           />
-          <!--h6>{{ $t('studio.text.t3') }}</h6-->
-          <!-- <vs-textarea
-            :placeholder="$t('studio.text.t3')"
-            @input="updateForm('description', $event.target.value)"
-            :value="form.description"
-            class="w-full mt-3 mb-3"
-          /> -->
-          <!--input
-            type="text"
-            size="large"
-            id="description"
-            :placeholder="$t('studio.text.t3')"
-            @input="updateForm('description', $event.target.value)"
-            :value="form.description"
-            v-validate="'required'"
-            class="w-full mt-3 mb-3 description2"
-          /-->
-          <div class="flex items-center -mx-2">
+          <div class="flex items-start -mx-2">
             <h6 class="px-2">{{ $t('studio.text.t4') }}</h6>
             <div class="px-2">
-              <!--v-select
-                :options="options"
-                :reduce="(label) => label.value"
-                required
-                label="label"
-                v-model="srcLang"
-              ></v-select-->
               <LanguageSelect v-model="srcLang" />
             </div>
           </div>
-          <!-- <vs-textarea
-            class="video-script"
-            :placeholder="$t('studio.text.t5')"
-            @input="updateForm('videoScript', $event.target.value)"
-            :value="form.videoScript"
-          >
-            {{ videoScript }}
-          </vs-textarea> -->
           <span class="text-danger text-sm" v-show="errors.has('script')">{{
             errors.first('script')
           }}</span>
@@ -71,47 +32,88 @@
             id="videoScript"
             name="script"
             :placeholder="$t('studio.text.t5')"
-            @input="updateForm('videoScript', $event.target.value)"
             v-model="videoScript"
             v-validate="'required'"
             class="w-full mt-3 mb-3 video-script2"
           >
           </textarea>
         </div>
-        <!--<vx-card no-shadow class="items-left mb-base mt-3">
-          <div v-if="videoScript === ''" contenteditable="true" @input="scriptInput" data-text="Enter Your Video Script here...">
-          </div>
-          <div v-else contenteditable="true" @input="scriptInput">
-            {{videoScript}}
-          </div>
-        </vx-card>-->
         <div class="items-center">
-          <!--<div class="w-full items-center mb-base">
-            <vs-button size="small" color="primary" class="mr-3" @click="summarizeScript">Summarize Script</vs-button>
-            <vs-button size="small" color="primary" class="mr-3">Check Script for Errors</vs-button>
-            <vs-button size="small" color="primary" class="mr-3">Long Scenes</vs-button>
-          </div>-->
-          <div class="w-full items-center">
+          <div class="w-full items-center relative">
             <vs-button class="bg-cutsom-purple" @click.prevent="handleSubmit">{{
               $t('studio.text.t6')
             }}</vs-button>
+            <div class="absolute" style="right: 8px; bottom: 6px">
+              <vs-dropdown
+                vs-custom-content
+                vs-trigger-click
+                class="cursor-pointer"
+              >
+                <span
+                  class="cursor-pointer flex items-center"
+                  style="transform: translate(0px, -2px)"
+                >
+                  <span class="font-bold">{{
+                    breakTypeOptions[breakType]
+                  }}</span>
+                  <vs-icon icon-pack="feather" icon="icon icon-chevron-down" />
+                </span>
+                <vs-dropdown-menu class="w-48 i18n-dropdown vx-navbar-dropdown">
+                  <vs-dropdown-item @click="breakType = 'short'">
+                    &nbsp;Short Scenes</vs-dropdown-item
+                  >
+                  <vs-dropdown-item @click="breakType = 'long'">
+                    &nbsp;Long Scenes</vs-dropdown-item
+                  >
+                </vs-dropdown-menu>
+              </vs-dropdown>
+            </div>
           </div>
         </div>
       </vx-card>
       <!--<div style="margin-bottom: 150px"></div>-->
     </form>
+    <DocumentUpload v-else-if="currentTabIndex === 1" />
+    <ExternalUrl v-else />
+    <vs-popup ref="custom_teams_modal" :active.sync="choiceModal">
+      <div class="p-2">
+        <h2 class="font-extrabold mb-4">Select from following links</h2>
+        <template v-for="(link, idx) in queryContent.links">
+          <vx-card
+            :key="idx"
+            @click="onSelectLink(idx)"
+            class="cursor-pointer mt-3"
+            style="background: #f3f4f6"
+            noShadow
+          >
+            <div class="flex items-center -m-2">
+              <vs-icon icon="language" size="24px" class="mr-2"></vs-icon>
+              <p :title="link" class="truncate ellipsis font-medium">
+                {{ link }}
+              </p>
+            </div></vx-card
+          >
+        </template>
+        <vs-divider>Or</vs-divider>
+        <p class="font-semibold">
+          Copy paste your script into the video script box alongwith a suitable
+          title in the video title
+        </p>
+      </div>
+    </vs-popup>
   </div>
 </template>
 
 <script>
-import 'vue-select/dist/vue-select.css';
 import LanguageSelect from './components/LanguageSelect.vue';
-import axios from '../../axios';
-import constants from '../../../constant';
+import DocumentUpload from './components/DocumentUpload';
+import ExternalUrl from './components/ExternalUrl';
 
 export default {
   components: {
-    LanguageSelect
+    LanguageSelect,
+    DocumentUpload,
+    ExternalUrl
   },
   data() {
     return {
@@ -120,11 +122,24 @@ export default {
         description: '',
         videoScript: ''
       },
+
       options: [
         { value: 'en', label: 'English' },
         { value: 'ru', label: 'Russian' },
         { value: 'pt', label: 'Portugese' }
-      ]
+      ],
+      breakType: 'short',
+      breakTypeOptions: {
+        long: 'Long Scenes',
+        short: 'Short Scenes'
+      },
+      queryContent: {
+        links: []
+      },
+      contentUrl: '',
+      choiceModal: false,
+      task_id: null,
+      requestInterval: Function
     };
   },
   computed: {
@@ -168,34 +183,85 @@ export default {
           value: value
         });
       }
+    },
+    uploadedDocumentIsPPT() {
+      return this.$store.state.studio.video.fromPPT;
+    },
+    currentTabIndex() {
+      return this.$store.state.studio.tabIndex;
     }
   },
   created() {
-    if (!this.$route.params.videoId) {
-      const storedForm = this.openStorage();
+    if (
+      !this.$route.params.videoId &&
+      Object.keys(this.$route.query).length === 0 &&
+      this.title === '' &&
+      this.videoScript === ''
+    ) {
+      const storedForm = JSON.parse(localStorage.getItem('form'));
       if (storedForm) {
-        /* this.form = {
-        ...this.form,
-        ...storedForm,
-      }; */
         this.title = storedForm.title;
         this.videoScript = storedForm.videoScript;
       }
     }
+    window.addEventListener('beforeunload', this.saveForm);
+  },
+  mounted() {
+    this.$refs.custom_teams_modal.$el.childNodes[1].childNodes[0].style.display =
+      'none';
+    if (this.$route.query.contentUrl) {
+      const { contentUrl, tempauth, Translate, ApiVersion } = this.$route.query;
+      const downloadUrl = tempauth
+        ? `${contentUrl}&Translate=${Translate}&tempauth=${tempauth}&ApiVersion=${ApiVersion}`
+        : contentUrl;
+      this.handleUrlSubmit(downloadUrl, this.$route.query.ext);
+    }
+    if (this.$route.query.attachments) {
+      const attachmentList = this.$route.query.attachments.split(',');
+      this.queryContent.links.splice(0, 0, ...attachmentList);
+    }
+    if (this.$route.query.html) {
+      // console.log(this.$route.query.html);
+      const parser = new DOMParser();
+      const parsedHtml = parser.parseFromString(
+        this.$route.query.html,
+        'text/html'
+      );
+      // console.log(parsedHtml);
+      const anchorTagArray = parsedHtml.querySelectorAll('a');
+      if (anchorTagArray) {
+        anchorTagArray.forEach(a => {
+          this.queryContent.links.push(a.href);
+        });
+        if (this.queryContent.links.length > 1) {
+          this.choiceModal = true;
+        } else if (this.queryContent.links.length === 1) {
+          this.onSelectLink(0);
+        } else {
+          this.$vs.dialog({
+            type: 'alert',
+            color: 'primary',
+            title: `Text too Long!`,
+            acceptText: 'Okay',
+            text:
+              'The length of text in the message was too long. Kindly copy the text and paste it in the video script box.'
+          });
+        }
+      }
+    } else if (this.$route.query.text) {
+      this.videoScript = this.$route.query.text;
+    }
+    if (Object.keys(this.$route.query).length !== 0) {
+      this.$router.replace({ query: null });
+    }
   },
   methods: {
-    openStorage() {
-      return JSON.parse(localStorage.getItem('form'));
-    },
-    saveStorage(form) {
+    saveForm() {
+      const form = {
+        title: this.title,
+        videoScript: this.videoScript
+      };
       localStorage.setItem('form', JSON.stringify(form));
-    },
-    updateForm(input, value) {
-      // this.form[input] = value;
-      let storedForm = this.openStorage();
-      if (!storedForm) storedForm = {};
-      storedForm[input] = value;
-      this.saveStorage(storedForm);
     },
     summarizeScript() {
       this.$Progress.start();
@@ -233,43 +299,31 @@ export default {
     createScenes() {
       this.$Progress.start();
       this.$vs.loading({ color: 'transparent' });
-      // this.$Progress.set(42)
-      // save video script
-      // Sentence Detection
-      /* this.$store.commit('studio/SET_VIDEO_ATTR', {
-        key: 'title',
-        value: this.form.title,
-      });
-      this.$store.commit('studio/SET_VIDEO_ATTR', {
-        key: 'description',
-        value: this.form.description,
-      });
-      this.$store.commit('studio/SET_VIDEO_ATTR', {
-        key: 'script',
-        value: this.form.videoScript,
-      }); */
       this.$store.commit('studio/SET_VIDEO_ATTR', {
         key: 'scrLang',
         value: this.srcLang
       });
       this.$store
-        .dispatch('studio/sentenceDetection')
-        .then(resSentences => {
-          console.log('sentences', resSentences);
-          this.$store
+        .dispatch('studio/sentenceDetection', this.breakType)
+        .then(res => {
+          console.log('sentences', res.data.sentences);
+          console.log('keywords', res.data.keywords);
+          /* this.$store
             .dispatch('studio/keywordExtraction')
             .then(resKeywords => {
-              console.log('keywords', resKeywords);
-              this.$store
-                .dispatch('studio/videoSuggestions')
-                .then(resVideos => {
-                  console.log('videos', resVideos);
-                  this.$store
+              console.log('keywords', resKeywords); */
+          this.$store
+            .dispatch('studio/videoSuggestions')
+            .then(resVideos => {
+              console.log('videos', resVideos);
+              this.$Progress.finish();
+              this.$vs.loading.close();
+              this.$store.commit('studio/resetState');
+              /* this.$store
                     .dispatch('studio/audioSuggestions')
                     .then(res => {
                       this.$Progress.finish();
                       this.$vs.loading.close();
-                      /* Reset data */
                       this.$store.commit('studio/resetState');
                     })
                     .catch(err => {
@@ -281,20 +335,20 @@ export default {
                         text: 'Audio Suggestions',
                         color: 'danger'
                       });
-                    });
-                })
-                .catch(err => {
-                  console.log(err);
-                  this.$Progress.fail();
-                  this.$vs.loading.close();
-                  this.$vs.notify({
-                    title: 'Error Occured',
-                    text: 'Video Suggestions',
-                    color: 'danger'
-                  });
-                });
+                    }); */
             })
             .catch(err => {
+              console.log(err);
+              this.$Progress.fail();
+              this.$vs.loading.close();
+              this.$vs.notify({
+                title: 'Error Occured',
+                text: 'Video Suggestions',
+                color: 'danger'
+              });
+            });
+        })
+        /* .catch(err => {
               console.log(err);
               this.$Progress.fail();
               this.$vs.loading.close();
@@ -304,7 +358,7 @@ export default {
                 color: 'danger'
               });
             });
-        })
+        }) */
         .catch(err => {
           console.log(err);
           this.$Progress.fail();
@@ -315,7 +369,142 @@ export default {
             color: 'danger'
           });
         });
+    },
+    handleUrlSubmit(contentUrl, ext) {
+      if (ext === 'mp4') {
+        this.contentUrl = contentUrl;
+        this.$validator.reset();
+        this.$Progress.start();
+        this.$vs.loading({ color: 'transparent' });
+        this.splitIntoChunks();
+      } else {
+        this.fetchContent(contentUrl, ext);
+      }
+    },
+    async splitIntoChunks() {
+      const requestBody = {
+        video_url: this.contentUrl,
+        option: 'small',
+        task_id: this.task_id
+      };
+      // console.log({ requestBody });
+      try {
+        const apiResponse = await this.$store.dispatch(
+          'studio/breakVideoIntoScenes',
+          requestBody
+        );
+        // console.log({ chunksAPIResponse: apiResponse });
+        if (!this.task_id) this.task_id = apiResponse.task_id;
+        if (apiResponse.status) {
+          const scenes = {};
+          const videos = {};
+          const images = {};
+          const keywords = {};
+          apiResponse.data.forEach((chunkUrl, index) => {
+            scenes[index] = '';
+            videos[index] = '';
+            images[index] = '';
+            keywords[index] = [];
+            this.$store.commit('studio/setInitialVideo', {
+              indexs: index,
+              value: chunkUrl
+            });
+            this.$store.commit('studio/setSentences', scenes);
+            this.$store.commit('studio/setVideos', videos);
+            this.$store.commit('studio/setKeywords', keywords);
+            this.$store.commit('studio/setImages', images);
+            this.$Progress.finish();
+            this.$vs.loading.close();
+            setTimeout(() => this.$store.commit('studio/toggleLibrary'), 1000);
+          });
+        } else {
+          this.requestInterval = setTimeout(
+            () => this.splitIntoChunks(),
+            10000
+          );
+        }
+      } catch (err) {
+        console.log({ chunksAPIError: err });
+        this.$vs.notify({
+          title: 'Error',
+          text: 'Fail to split video',
+          color: 'danger'
+        });
+        this.$Progress.fail();
+        this.$vs.loading.close();
+      }
+    },
+    fetchContent(url, ext) {
+      this.$Progress.start();
+      this.$vs.loading({ color: 'transparent' });
+      this.$store
+        .dispatch('studio/extractInfoFromUrl', { url, ext })
+        .then(data => {
+          if (data.slides) {
+            const scenes = {};
+            const videos = {};
+            const images = {};
+            const keywords = {};
+            this.$store.commit('studio/SET_VIDEO_ATTR', {
+              key: 'fromPPT',
+              value: true
+            });
+            let script = '';
+            Object.values(data.slides).forEach(({ img_path, text }, index) => {
+              scenes[index] = '*No notes found in this slide*';
+              videos[index] = '';
+              images[index] = { 0: [img_path, 'slide', 'slide'] };
+              keywords[index] = [];
+              script += text;
+              this.$store.commit('studio/setInitialVideo', {
+                indexs: index,
+                value: img_path
+              });
+            });
+            this.$store.commit('studio/setSentences', scenes);
+            this.$store.commit('studio/setVideos', videos);
+            this.$store.commit('studio/setKeywords', keywords);
+            this.$store.commit('studio/setImages', images);
+            this.$store.commit('studio/setScript', script);
+          }
+          if (data.title) {
+            this.$store.commit('studio/SET_VIDEO_ATTR', {
+              key: 'title',
+              value: data.title
+            });
+          }
+          if (data.text) {
+            this.$store.commit('studio/setScript', data.text);
+          }
+          if (!this.uploadedDocumentIsPPT) this.tabIndex = 0;
+          else
+            setTimeout(() => this.$store.commit('studio/toggleLibrary'), 1000);
+
+          this.$Progress.finish();
+          this.$vs.loading.close();
+        })
+        .catch(() => {
+          this.$Progress.fail();
+          this.$vs.loading.close();
+          this.$vs.notify({
+            title: 'Invalid URL',
+            text: 'No text found',
+            color: 'danger'
+          });
+        });
+    },
+    onSelectText() {
+      this.videoScript = this.queryContent.text;
+      this.choiceModal = false;
+    },
+    onSelectLink(idx) {
+      this.choiceModal = false;
+      this.fetchContent(this.queryContent.links[idx]);
     }
+  },
+  beforeDestroy() {
+    this.saveForm();
+    window.removeEventListener('beforeunload', this.saveForm);
   }
 };
 </script>
@@ -367,7 +556,7 @@ export default {
   padding: 9px;
 }
 .video-script2 {
-  height: 280px !important;
+  height: 250px !important;
   border: 0.5px solid lightgray;
   font-size: 14px;
   overflow-y: auto;

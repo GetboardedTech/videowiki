@@ -10,11 +10,11 @@ const HTTP = axios.create({
 export const ajaxCallMixin = {
   response: {},
   methods: {
-    ajaxCall: async function (url, data, callBack = null, extraFields = []) {
+    ajaxCall: async function(url, data, callBack = null, extraFields = []) {
       var form = new FormData();
-      var params = JSON.stringify(data);
-      form.append('body', params);
-      for (let [key, value] of Object.entries(extraFields)) {
+      // var params = JSON.stringify(data);
+      // form.append('body', params);
+      for (const [key, value] of Object.entries(data)) {
         form.append(key, value);
       }
 
@@ -24,12 +24,12 @@ export const ajaxCallMixin = {
         return callBack(this.response.data);
       }
     },
-    getRequest: async function (url, callBack = null) {
+    getRequest: async function(url, callBack = null) {
       this.response = await HTTP.get(url);
       if (callBack != null) {
         return callBack(this.response.data);
       }
-    },
+    }
     /* downloadMedia: async function (url, callback = null) {
       try {
         this.response.data = await HTTP.get(url, { responseType: 'blob' });

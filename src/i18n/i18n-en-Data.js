@@ -4,11 +4,11 @@ export default {
       e1: 'Your browser does not support the video tag.'
     },
     sidebarPanel: {
-      sp1: 'Text',
+      sp1: 'Script',
       sp2: 'Library',
       sp3: 'Format',
       sp4: 'Course',
-      sp5: 'Voice',
+      sp5: 'Sound',
       sp6: 'Publish',
       sp7: 'Add a video script and create scenes',
       sp8: 'Select videos for your script',

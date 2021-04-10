@@ -45,7 +45,7 @@ export default {
   name: 'Reviews',
   components: {
     VueperSlides,
-    VueperSlide,
+    VueperSlide
   },
   props: ['users'],
   data() {
@@ -69,10 +69,10 @@ export default {
           slideRatio: 1.4,
           visibleSlides: 1,
           touchable: true
-        },
-      },
+        }
+      }
     };
-  },
+  }
 };
 </script>
 <style lang="scss">
@@ -92,7 +92,8 @@ export default {
 .active-review {
   transform: scale(0.8);
 }
-@media only screen and (max-width:480px) {
-  .active-review {}
+@media only screen and (max-width: 480px) {
+  .active-review {
+  }
 }
 </style>

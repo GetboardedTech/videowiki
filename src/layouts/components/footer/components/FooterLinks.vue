@@ -22,26 +22,26 @@ export default {
     return {
       sections: {
         Product: [
-          {
+          /* {
             title: 'Acquire Users',
             url: '#'
           },
           {
             title: 'Blockchain',
             url: '#'
-          },
+          }, */
           {
             title: 'Content',
             url: '/'
           },
-          {
+          /* {
             title: 'Coaching',
             url: '#'
-          },
+          }, */
           {
-            title: 'Curriculums',
-            url: '#'
-          },
+            title: 'Class',
+            url: '/classroom'
+          }
           /* {
             title: 'Investores',
             url: '#'
@@ -61,12 +61,16 @@ export default {
             url: '/team'
           },
           {
+            title: 'Integration',
+            url: '/integration/ms-teams'
+          },
+          /* {
             title: 'Brand Guidelines',
             url: '#'
-          },
+          }, */
           {
-            title: 'Press Kit',
-            url: '#'
+            title: 'Contact Us', // 'Press Kit',
+            url: '/contact-us'
           }
         ],
         Resources: [

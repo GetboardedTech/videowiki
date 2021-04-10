@@ -8,7 +8,10 @@
             to="/"
             class="vx-logo cursor-pointer flex items-center mb-6"
           >
-            <img src="@/assets/images/logo/logo.svg" class="mr-2 lg:h-16 h-12" />
+            <img
+              src="@/assets/images/logo/logo.svg"
+              class="mr-2 lg:h-16 h-12"
+            />
             <span class="vx-logo-text text-prp">VideoWiki</span>
           </router-link>
           <div class="text-base flex lg:w-2/3 vs-justify-center">
@@ -76,8 +79,12 @@
         class="flex justify-between lg:w-10/12 md:w-2/3 w-full mt-2 mx-auto p-2"
       >
         <div class="flex">
-          <a class="text-black mr-5">Terms</a>
-          <a class="text-black mr-5">Privacy</a>
+          <router-link class="text-black mr-5" to="/terms-of-use"
+            >Terms</router-link
+          >
+          <router-link class="text-black mr-5" to="/privacy-policy"
+            >Privacy</router-link
+          >
           <a class="text-black">License</a>
         </div>
         <div>
@@ -86,20 +93,24 @@
             icon="icon-linkedin"
             rounded="true"
             size="20px"
-            class="mr-5"
+            class="mr-5 cursor-pointer"
+            @click="openUrl('https://www.linkedin.com/company/videowiki.pt/')"
           ></vs-icon>
           <vs-icon
             icon-pack="feather"
-            icon="icon-facebook"
+            icon="icon-file-text"
             rounded="true"
             size="20px"
-            class="mr-5"
+            class="mr-5 cursor-pointer"
+            @click="openUrl('https://medium.com/videowiki-pt')"
           ></vs-icon>
           <vs-icon
             icon-pack="feather"
             icon="icon-twitter"
             rounded="true"
             size="20px"
+            class="cursor-pointer"
+            @click="openUrl('https://twitter.com/VideoWiki_PT')"
           ></vs-icon>
         </div>
       </div>
@@ -112,13 +123,18 @@ import FooterLinks from './components/FooterLinks';
 export default {
   name: 'the-footer',
   components: {
-    FooterLinks,
+    FooterLinks
   },
   props: {
     classes: {
-      type: String,
-    },
+      type: String
+    }
   },
+  methods: {
+    openUrl(url) {
+      window.open(url, '_blank');
+    }
+  }
 };
 </script>
 <style scoped>

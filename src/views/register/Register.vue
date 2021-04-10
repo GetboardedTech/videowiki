@@ -19,7 +19,7 @@
     </div>
 
     <div class="sm:w-full md:w-1/2 lg:w-1/2 flex justify-center">
-      <div class="px-8 login-tabs-container lg:w-2/3">
+      <div class="px-8 register-tabs-container lg:w-2/3">
         <div class="vx-card__title mb-4">
           <h1 class="mb-base text-center"><b>Create Account</b></h1>
           <!--p style="color:#8692A6;" class="text-xl">Login with your social media accounts</p-->
@@ -36,25 +36,29 @@ import RegisterJwt from './RegisterJWT.vue';
 
 export default {
   components: {
-    RegisterJwt,
-  },
+    RegisterJwt
+  }
 };
 </script>
 
 <style lang="scss">
 .register-tabs-container {
   min-height: 517px;
-  padding-top: 6rem;
+  padding-top: 1rem;
   .con-tab {
     padding-bottom: 23px;
   }
 }
-/*.company-logo {
+.svg-white {
+  filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(130deg)
+    brightness(106%) contrast(103%);
+}
+.company-logo {
   top: 5%;
-  left: 5%;
+  left: 10%;
 }
 
-.register-background img {
+/*.register-background img {
   position: absolute;
   left: 0;
   right: 0;

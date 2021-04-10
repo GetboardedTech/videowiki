@@ -10,13 +10,52 @@
 import store from '../store';
 import axios from '../../axios';
 import constants from '../../../constant';
-import { resolve, reject } from 'core-js/fn/promise';
-import state from '../state';
 
 export default {
   // /////////////////////////////////////////////
   // VideoWiki
   // /////////////////////////////////////////////
+
+  breakVideoIntoScenes({ commit }, reuqestBody) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(constants.apiUrl + '/api/video-chunks/', reuqestBody)
+        .then(res => {
+          resolve(res.data);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  },
+
+  extractInfoFromUrl({ commit }, requestBody) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(constants.apiUrl + '/api/extract_info_url', requestBody)
+        .then(res => {
+          resolve(res.data.data);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  },
+  uploadDoc({ commit }, documentFile) {
+    var form = new FormData();
+    form.append('file', documentFile);
+    return new Promise((resolve, reject) => {
+      axios
+        .post(constants.apiUrl + '/api/extract_info_file', form)
+        .then(res => {
+          // commit('selectVideo', res.data.video_url);
+          resolve(res.data.data);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  },
   summarizeScript({ commit }) {
     return new Promise((resolve, reject) => {
       const dataObj = {
@@ -67,17 +106,18 @@ export default {
         });
     });
   },
-  sentenceDetection({ commit }) {
+  sentenceDetection({ commit }, value) {
     return new Promise((resolve, reject) => {
       const dataObj = {
         text: store.state.studio.videoScript,
-        /*srcLang: store.state.studio.video.srcLang,*/
-        break_type: 'long_sentences'
+        /* srcLang: store.state.studio.video.srcLang, */
+        break_type: value
       };
       axios
         .post(constants.apiUrl + '/sd/', dataObj)
         .then(res => {
           commit('setSentences', res.data.sentences);
+          commit('setKeywords', res.data.keywords);
           commit('setSourceLanguage', res.data.srcLang);
           resolve(res);
         })
@@ -86,7 +126,7 @@ export default {
         });
     });
   },
-  keywordExtraction({ commit }) {
+  /* keywordExtraction({ commit }) {
     return new Promise((resolve, reject) => {
       const dataObj = {
         text: store.state.studio.videoScript,
@@ -102,7 +142,7 @@ export default {
           reject(err);
         });
     });
-  },
+  }, */
   audioSuggestions({ commit }) {
     return new Promise((resolve, reject) => {
       const dataObj = {
@@ -112,7 +152,7 @@ export default {
       axios
         .post(constants.apiUrl + '/al/', dataObj)
         .then(res => {
-          //console.log('audio suggestions', res);
+          // console.log('audio suggestions', res);
           commit('setAudios', res.data);
           resolve(res);
         })
@@ -130,10 +170,7 @@ export default {
       axios
         .post(constants.apiUrl + '/avm/', dataObj)
         .then(res => {
-          //commit('setVideoWithAudio', res.data.url);
-          if (!store.state.studio.steps.Narration) {
-            commit('setActionPerformed', 'Narration');
-          }
+          // commit('setVideoWithAudio', res.data.url);
           resolve(res);
         })
         .catch(err => {
@@ -159,12 +196,12 @@ export default {
         });
     });
   },
-  searchVideo({ commit }, dataObj) {
+  searchMedia({ commit }, dataObj) {
     return new Promise((resolve, reject) => {
       axios
         .post(constants.apiUrl + '/vs/', dataObj)
         .then(res => {
-          //commit('setSearchedVideos', res.data);
+          // commit('setSearchedVideos', res.data);
           resolve(res);
         })
         .catch(err => {
@@ -174,18 +211,10 @@ export default {
   },
   addMotionToImage({ commit }, dataObj) {
     return new Promise((resolve, reject) => {
-      const payload = {
-        image_url: dataObj.image_url,
-        zoom: dataObj.zoom
-      };
       axios
-        .post(constants.apiUrl + '/image/zoom', payload)
+        .post(constants.apiUrl + '/image/zoom', dataObj)
         .then(res => {
-          commit('selectVideo', {
-            value: res.data.url,
-            sceneNum: dataObj.sceneNum
-          });
-          resolve(res);
+          resolve(res.data);
         })
         .catch(err => {
           reject(err);
@@ -198,9 +227,6 @@ export default {
         .post(constants.apiUrl + '/vsrt/', sceneScriptData)
         .then(res => {
           // commit("setVideos", res.data)
-          if (!store.state.studio.steps.Subtitles) {
-            commit('setActionPerformed', 'Subtitles');
-          }
           resolve(res);
         })
         .catch(err => {

@@ -7,13 +7,16 @@
   Author URL: http://www.themeforest.net/user/pixinvent
 ========================================================================================== */
 
-import axios from '../axios';
-import store from './store.js';
-import constants from '../../constant';
 // import connectWallet from '../blockchain/connectWallet';
 // var walletInstance = new connectWallet();
 import { onBuy, onConnect, onDisconnect } from '../blockchain/connectWallet';
-import { buyContent, publishContent, downloadContent } from '../blockchain/OceanMarket';
+import {
+  buyContent,
+  publishContent,
+  downloadContent,
+  getPrice,
+  isDownloadable
+} from '../blockchain/OceanMarket';
 
 const actions = {
   // /////////////////////////////////////////////
@@ -58,8 +61,7 @@ const actions = {
   },
   async connectWallet({ commit }) {
     try {
-      const status = await onConnect();
-      if (status) commit('CONNECT');
+      await onConnect();
     } catch (err) {
       console.log(err);
     }
@@ -73,15 +75,27 @@ const actions = {
       console.log(err);
     }
   },
-
-  async buyContent({ commit }) {
+  /* async buyContent({ commit }) {
     try {
       await onBuy();
     } catch (err) {
       console.log(err);
     }
+  }, */
+  async getAssetPrice({ commit }, exchangeId) {
+    try {
+      const price = await getPrice(exchangeId);
+      return price;
+    } catch (err) {
+      console.log(err);
+    }
   },
-
+  async getDownloadStatus({ commit }, payload) {
+    return await isDownloadable(
+      payload.dataTokenAddress,
+      payload.accountAddress
+    );
+  },
   async publishToOcean({ commit }, payload) {
     try {
       const videoTxData = await publishContent(
@@ -96,28 +110,25 @@ const actions = {
       return true;
     } catch (e) {
       console.log(e);
-      return false;
+      throw e;
     }
   },
   async initiateBuy({ commit }, exchangeId) {
     try {
       await buyContent(exchangeId);
-      return true;
     } catch (e) {
       console.log({ buyContentError: e });
-      return false;
+      throw e;
     }
   },
   async startDownload({ commit }, payload) {
     try {
       await downloadContent(payload.did, payload.dta);
-      return true;
     } catch (e) {
       console.log({ downloadContentErro: e });
-      return false;
+      throw e;
     }
-  },
-
+  }
 };
 
 export default actions;

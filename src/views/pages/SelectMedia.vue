@@ -7,7 +7,7 @@
         class="scene-card"
         :class="{
           activeScene:
-            $store.state.studio.currentActiveScene === parseInt(indexs) + 1,
+            $store.state.studio.currentActiveScene === parseInt(indexs) + 1
         }"
       >
         <p class="font-semibold items-left mb-base" style="white-space: normal">
@@ -37,17 +37,26 @@
           height="auto"
           src="https://oldweb.dyu.edu.tw/english/design/no-video.gif"
         /-->
-          <video
-            width="100%"
-            height="auto"
-            controls
-            preload="auto"
-            :id="`library_item_${indexs}`"
-            :src="selectedFromLibraryVideos[parseInt(indexs) + 1]"
-            v-if="isVideoUrl(indexs)"
-          >
-            {{ $t('studio.errors.e1') }}
-          </video>
+          <template v-if="isValidUrl(indexs)">
+            <img
+              width="100%"
+              height="auto"
+              class="image-frame"
+              v-if="isImageUrl(selectedFromLibraryVideos[parseInt(indexs) + 1])"
+              :src="selectedFromLibraryVideos[parseInt(indexs) + 1]"
+            />
+            <video
+              width="100%"
+              height="auto"
+              controls
+              v-else
+              preload="auto"
+              :id="`library_video_${indexs}`"
+              :src="selectedFromLibraryVideos[parseInt(indexs) + 1]"
+            >
+              {{ $t('studio.errors.e1') }}
+            </video>
+          </template>
           <div
             v-else
             class="bg-box relative vs-con-loading__container"
@@ -92,7 +101,7 @@ export default {
   components: {
     VxCard,
     VideoNotFound,
-    SearchModal,
+    SearchModal
   },
   // data() {
   //   return {
@@ -104,6 +113,7 @@ export default {
       selectedFile: null,
       showSearchModal: false,
       currentScene: null,
+      mediaType: 'video'
     };
   },
   computed: {
@@ -113,6 +123,9 @@ export default {
     /* sceneImage() {
       return this.$store.state.studio.sceneImage;
     }, */
+    insideIframe() {
+      return this.$store.state.insideIframe;
+    }
   },
   methods: {
     /* callSetSceneImage(index, value) {
@@ -121,15 +134,17 @@ export default {
         value: value,
       });
     }, */
-    isVideoUrl(indexs) {
-      const videoUrl = this.selectedFromLibraryVideos[parseInt(indexs) + 1];
-      if (!videoUrl) {
+    isImageUrl(urlString) {
+      const imgExtentions = ['jpg', 'png', 'jpeg'];
+      urlString = new URL(urlString);
+      return imgExtentions.includes(urlString.pathname.split('.')[1]);
+    },
+    isValidUrl(indexs) {
+      const mediaUrl = this.selectedFromLibraryVideos[parseInt(indexs) + 1];
+      if (!mediaUrl) {
         const payload = this.initialVideo(indexs);
-        if (payload.value) {
-          this.$store.commit('studio/setInitialVideo', payload);
-          return true;
-        }
-        return false;
+        this.$store.commit('studio/setInitialVideo', payload);
+        return !!payload.value;
       }
       return true;
     },
@@ -140,7 +155,7 @@ export default {
     initialVideo(indexs) {
       const dataObj = {
         indexs: parseInt(indexs),
-        value: null,
+        value: null
       };
       if (
         Object.keys(this.$store.state.studio.videos[parseInt(indexs)]).length >
@@ -153,8 +168,6 @@ export default {
         if (url[url.length - 1] !== 'gif') dataObj.value = videoUrl;
       }
       return dataObj;
-
-      // return this.selectedFromLibraryVideos[parseInt(indexs) + 1];
     },
     updateScroll() {
       // let scrollPosition = window.scrollY
@@ -164,17 +177,16 @@ export default {
           .getElementById('scene_card_' + s)
           .getBoundingClientRect();
         // console.log(s, "bounding client", rect.top, rect.bottom);
-
-        if (rect.top < 200 && rect.bottom > 500) {
+        if (rect.top < 200 && rect.bottom > (this.insideIframe ? 420 : 500)) {
           // console.log(s+" is active")
           // this.$store.commit('studio/removeSearchedVideos');
           this.$store.commit('studio/setActiveScene', parseInt(s) + 1);
         }
       }
-    },
+    }
   },
   mounted() {
-    window.addEventListener('scroll', this.updateScroll);
+    window.addEventListener('scroll', this.updateScroll, { passive: true });
     const el = document.getElementById(
       `scene_card_${this.$store.state.studio.currentActiveScene - 1}`
     );
@@ -182,7 +194,7 @@ export default {
   },
   destroyed() {
     window.removeEventListener('scroll', this.updateScroll);
-  },
+  }
 };
 </script>
 

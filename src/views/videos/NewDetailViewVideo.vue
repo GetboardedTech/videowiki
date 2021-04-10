@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white p-20">
+  <div class="bg-white padding-5">
     <!-- VIDEO -->
     <video width="100%" height="auto" :src="videoUrl" controls>
       Your browser does not support the video tag.
@@ -228,30 +228,33 @@
 </template>
 <script>
 import Comment from './components/Comment';
-//import VideoBranch from './components/video-branch/VideoBranch';
+// import VideoBranch from './components/video-branch/VideoBranch';
 import constants from '../../../constant';
 import VideoCard from '@/views/components/VideoCard';
 export default {
   name: 'DetailViewVideo',
   components: {
     Comment,
-    VideoCard,
-    //VideoBranch,
+    VideoCard
+    // VideoBranch,
   },
   data() {
     return {
       versionChip: true,
-      showBranch: false,
+      showBranch: false
     };
   },
   computed: {
     videoUrl() {
-      return `${constants.apiUrl}/media/${this.$route.query.url}`;
+      return `${constants.apiUrl}${this.$route.query.url}`;
     }
   }
 };
 </script>
 <style scoped>
+.padding-5 {
+  padding: 5%;
+}
 .tag-share-section {
   min-height: 116px;
   display: flex;

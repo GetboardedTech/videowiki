@@ -30,8 +30,14 @@
   </l-map>
 </template>
 <script>
-import leaflet from 'leaflet';
-import { LMap, LTileLayer, LMarker, LIcon, LPopup, LControlZoom } from 'vue2-leaflet';
+import {
+  LMap,
+  LTileLayer,
+  LMarker,
+  LIcon,
+  LPopup,
+  LControlZoom
+} from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 export default {
   name: 'Map',

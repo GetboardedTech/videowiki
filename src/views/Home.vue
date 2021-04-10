@@ -1,6 +1,6 @@
 <template>
   <div class="items-center">
-    <div class="w-full lg:w-2/3 md:w-2/3">
+    <div class="w-full lg:w-2/3 md:w-4/5">
       <EditScript v-if="$store.state.studio.panel.text" />
       <SelectVideos v-else-if="$store.state.studio.panel.library" />
       <!--FormatVideo v-else-if="$store.state.studio.panel.style" /-->
@@ -17,13 +17,13 @@ import SelectVideos from './pages/SelectMedia';
 import PublishVideo from './pages/PublishVideo';
 import EditScenes from './pages/EditScenes';
 import AddMusic from './pages/AddMusic';
-import FormatVideo from './pages/FormatVideo';
+// import FormatVideo from './pages/FormatVideo';
 export default {
   data() {
     return {};
   },
   components: {
-    FormatVideo,
+    // FormatVideo,
     AddMusic,
     EditScenes,
     PublishVideo,
@@ -35,6 +35,9 @@ export default {
       this.$vs.loading();
       this.getVideoData();
     } else this.clearState();
+    if (window.location !== window.parent.location) {
+      document.body.style.zoom = '0.8';
+    }
   },
   methods: {
     getVideoData() {

@@ -18,15 +18,16 @@
       <div class="mb-base"></div>
       <div class="flex justify-center">
         <vs-button
-          @click="handleVideoSubmit(false)"
+          @click="handlePublish"
           class="bg-custom-purple mr-4"
+          v-if="!insideIframe"
           >{{ $t('studio.publish.p1') }}</vs-button
         >
-        <vs-button
+        <!--vs-button
           class="bg-custom-purple mr-4"
-          @click.prevent="handleVideoSubmit(true)"
+          @click.prevent="handleSaveForLater"
           >Save Draft</vs-button
-        >
+        -->
 
         <vs-button
           class="bg-custom-purple px-4 vs-con-loading__container"
@@ -37,25 +38,28 @@
           >Download</vs-button
         >
       </div>
-      <!--a :href="this.getVideoLink" :download="this.getFilename" target="_parent">Download</a-->
     </vx-card>
-    <!--vs-popup title="Login Required" :active.sync="showAlert">
-      <p>
-        We are glad to see that you used our platform to create your video. In
-        order to publish this we need you to <b>Log in</b> to your account.
-        However, you can still download the video if you want.
-      </p>
-    </vs-popup-->
+    <Transaction
+      :show="showTransactionModal"
+      transactionType="Publish"
+      :transactionPhase="currentTxPhase"
+      @close="showTransactionModal = false"
+      @retry="handlePublish"
+    />
   </div>
 </template>
 
 <script>
 import constants from '../../../constant';
 import axios from 'axios';
+import Transaction from '@/views/components/Transaction/Transaction.vue';
 import { mapState } from 'vuex';
 
 export default {
   name: 'PublishVideo',
+  components: {
+    Transaction
+  },
   data() {
     return {
       player: null,
@@ -63,10 +67,13 @@ export default {
       indexs: 0,
       constants,
       // showAlert: false,
+      saveForLater: false,
       task_id: null,
       videoId: null,
       downloadInProgress: false,
-      previewReq: Function,
+      showTransactionModal: false,
+      currentTxPhase: 'Processing',
+      previewReq: Function
     };
   },
   computed: {
@@ -86,18 +93,37 @@ export default {
     totalScenes() {
       return Object.keys(this.$store.state.studio.scenes).length;
     },
+    sceneTransitionList() {
+      return this.$store.state.studio.sceneTransition;
+    },
+    insideIframe() {
+      return this.$store.state.insideIframe;
+    }
   },
   mounted() {
-    if (this.$route.params.videoId) this.videoId = this.$route.params.videoId;
-    this.$store.commit('studio/setPreviewVideo', '');
-    this.collectVideos();
+    if (this.$route.params.videoId) {
+      this.videoId = this.$route.params.videoId;
+    }
+    if (this.getVideoLink) {
+      this.$vs.dialog({
+        type: 'confirm',
+        color: 'primary',
+        title: `Confirm`,
+        acceptText: 'Yes',
+        text: 'Do you want to generate the Preview again ?',
+        accept: this.collectVideos
+      });
+    } else {
+      this.collectVideos();
+    }
   },
   methods: {
     collectVideos() {
+      this.$store.commit('studio/setPreviewVideo', null);
       this.$vs.loading({
         background: '#fff',
         container: '#preview-loading',
-        text: 'Generating Preview...',
+        text: 'Generating Preview...'
       });
       const libraryItems = this.$store.state.studio.selectedFromLibraryVideos;
       const preparedScene = this.$store.state.studio.preparedScenesVideos;
@@ -113,7 +139,9 @@ export default {
       const videoData = {
         videos: this.videos,
         task_id: this.task_id,
-        bgm: this.$store.state.studio.backgroundMusic.url || null,
+        isPreview: 1,
+        motions: this.sceneTransitionList,
+        bgm: this.$store.state.studio.backgroundMusic.url || null
       };
       try {
         const apiResponse = await this.$store.dispatch(
@@ -129,7 +157,7 @@ export default {
           );
           this.$store.commit('studio/SET_VIDEO_ATTR', {
             key: 'image',
-            value: apiResponse.data.image_url,
+            value: apiResponse.data.image_url
           });
           // this.$Progress.finish();
           this.$vs.loading.close('#preview-loading > .con-vs-loading');
@@ -151,7 +179,7 @@ export default {
         this.$vs.notify({
           title: 'Error',
           text: 'Merge Failed',
-          color: 'danger',
+          color: 'danger'
         });
       }
     },
@@ -159,44 +187,63 @@ export default {
       const userInfo = this.$store.state.AppActiveUser;
       return userInfo.username;
     },
-    async handleVideoSubmit(saveLater) {
+    handlePublish() {
+      this.saveForLater = false;
+      this.handleVideoSubmit();
+    },
+    handleSaveForLater() {
+      this.saveForLater = true;
+      this.handleVideoSubmit();
+    },
+    async handleVideoSubmit() {
       if (this.isUserLoggedIn()) {
         const title = this.$store.state.studio.video.title;
         const desc = this.$store.state.studio.video.description;
         if (title !== '' && desc !== '') {
-          //this.submitVideo(saveLater);
+          // this.submitVideo(saveLater);
           if (this.isPaid) {
             if (this.$store.state.isWalletConnected) {
               const payload = {
                 author: this.getUserName(),
-                metaData:{
+                metaData: {
                   url: this.getVideoLink,
                   title: title
                 }
               };
-              await this.$store.dispatch('publishToOcean', payload);
-              this.submitVideo(saveLater);
+              this.$store.commit('SET_CURRENT_TRANSACTION_STEP', 1);
+              this.currentTxPhase = 'Processing';
+              this.showTransactionModal = true;
+              try {
+                await this.$store.dispatch('publishToOcean', payload);
+                setTimeout(() => {
+                  this.showTransactionModal = false;
+                  this.submitVideo();
+                }, 2000);
+              } catch (error) {
+                if (error.code === 4001) this.currentTxPhase = 'Rejected';
+                else this.currentTxPhase = 'Failed';
+              }
             } else {
               this.$vs.notify({
-                title: 'Connect your wallet first',
-                color: 'primary',
+                text: 'Connect your Wallet First',
+                color: 'primary'
               });
             }
           } else {
-            this.submitVideo(saveLater);
+            this.submitVideo();
           }
         } else {
           this.$vs.notify({
             title: 'Input Missing',
             text: 'Title/Description cannot be empty',
-            color: 'primary',
+            color: 'primary'
           });
         }
       } else {
         this.$store.commit('TOGGLE_LOGIN_POPUP', true);
       }
     },
-    submitVideo(saveLater) {
+    submitVideo() {
       this.$Progress.start();
       this.$vs.loading({ color: 'transparent' });
       const video = this.$store.state.studio.video;
@@ -211,53 +258,62 @@ export default {
           url: video.url,
           user: this.getUserName(),
           duration: document.getElementById('preview_video').duration,
-          language: video.srcLang,
+          language: video.srcLang
         },
         id: this.videoId,
         published_id: video.published_id,
         scenes: sceneData,
         bgm: metaData.backgroundMusic.url || null,
         video: metaData.previewVideo,
-        is_save_later: saveLater,
-        tags: metaData.tags,
+        is_save_later: this.saveForLater,
+        tags: metaData.tags
       };
       console.log(data);
       /* Ajax call start */
       this.$store
         .dispatch('studio/publishVideo', data)
-        .then((res) => {
-          if (!saveLater) {
-            const payload = {
-              exchange_key: video.txData.exchangeId,
-              dod: video.txData.did,
-              dataToken: video.txData.dataTokenAddress,
-              paid: video.isPaid,
-              video_id: res.data.id,
-            };
-            console.log(payload);
-            this.$store
-              .dispatch('studio/postTxData', payload)
-              .then(() => {
-                this.$Progress.finish();
-                this.$vs.loading.close();
-                if (saveLater) this.$router.push('/myvideos');
-                else this.$router.push('/dashboard');
-                this.$vs.notify({
-                  title: 'Success',
-                  text: 'Video Published Successfully',
-                  color: 'success',
+        .then(res => {
+          if (!this.saveForLater) {
+            if (this.isPaid) {
+              const payload = {
+                exchange_key: video.txData.exchangeId,
+                dod: video.txData.did,
+                dataToken: video.txData.dataTokenAddress,
+                paid: video.isPaid,
+                video_id: res.data.id
+              };
+              this.$store
+                .dispatch('studio/postTxData', payload)
+                .then(() => {
+                  this.$Progress.finish();
+                  this.$vs.loading.close();
+                  this.$router.push('/dashboard');
+                  this.$vs.notify({
+                    title: 'Success',
+                    text: 'Video Published Successfully',
+                    color: 'success'
+                  });
+                })
+                .catch(err => {
+                  console.log(err);
+                  this.$Progress.fail();
+                  this.$vs.loading.close();
+                  this.$vs.notify({
+                    title: 'Error',
+                    text: 'Video Tx data was not saved',
+                    color: 'danger'
+                  });
                 });
-              })
-              .catch((err) => {
-                console.log(err);
-                this.$Progress.fail();
-                this.$vs.loading.close();
-                this.$vs.notify({
-                  title: 'Error',
-                  text: 'Video Tx data was not saved',
-                  color: 'danger',
-                });
-              });
+              return;
+            }
+            this.$Progress.finish();
+            this.$vs.loading.close();
+            this.$router.push('/dashboard');
+            this.$vs.notify({
+              title: 'Success',
+              text: 'Video Published Successfully',
+              color: 'success'
+            });
           } else {
             this.$Progress.finish();
             this.$vs.loading.close();
@@ -265,18 +321,20 @@ export default {
             this.$vs.notify({
               title: 'Success',
               text: 'Video Saved Successfully',
-              color: 'success',
+              color: 'success'
             });
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           this.$Progress.fail();
           this.$vs.loading.close();
           this.$vs.notify({
             title: 'Error',
-            text: saveLater ? 'Video was not saved' : 'Video was not published',
-            color: 'danger',
+            text: this.saveForLater
+              ? 'Video was not saved'
+              : 'Video was not published',
+            color: 'danger'
           });
         });
       /* Ajax call end */
@@ -287,7 +345,7 @@ export default {
         const {
           sceneScriptColor: font_color,
           sceneScriptPosition: position,
-          sceneBackgroundColor: background_color,
+          sceneBackgroundColor: background_color
         } = metaData.styles[key];
 
         scenes[key] = {
@@ -298,7 +356,7 @@ export default {
           uploaded_video: null,
           position: position.toString(),
           font_color,
-          background_color,
+          background_color
         };
         // audio url
         if (metaData.recordedAudios[key]) {
@@ -306,12 +364,14 @@ export default {
           scenes[key].audio = audioUrl.search('blob:') === -1 ? audioUrl : null;
         }
         // video url
-        const videoUrl = new URL(
-          metaData.selectedFromLibraryVideos[parseInt(key) + 1]
-        );
-        if (videoUrl.origin === constants.apiUrl)
-          scenes[key].uploaded_video = videoUrl.href;
-        else scenes[key].online_url = videoUrl.href;
+        if (metaData.selectedFromLibraryVideos[parseInt(key) + 1]) {
+          const videoUrl = new URL(
+            metaData.selectedFromLibraryVideos[parseInt(key) + 1]
+          );
+          if (videoUrl.origin === constants.apiUrl)
+            scenes[key].uploaded_video = videoUrl.href;
+          else scenes[key].online_url = videoUrl.href;
+        }
       });
       return scenes;
     },
@@ -321,11 +381,11 @@ export default {
         background: 'primary',
         color: '#fff',
         container: '#download-with-loading',
-        scale: 0.45,
+        scale: 0.45
       });
       axios
         .get(this.getVideoLink, { responseType: 'blob' })
-        .then((response) => {
+        .then(response => {
           const blob = new Blob([response.data], { type: 'video/mp4' });
           const link = document.createElement('a');
           link.href = URL.createObjectURL(blob);
@@ -337,18 +397,18 @@ export default {
           this.$vs.notify({
             title: 'Error Occured',
             text: 'Download Failed',
-            color: 'danger',
+            color: 'danger'
           });
         })
         .finally(() => {
           this.downloadInProgress = false;
           this.$vs.loading.close('#download-with-loading > .con-vs-loading');
         });
-    },
+    }
   },
   beforeDestroy() {
     clearTimeout(this.previewReq);
-  },
+  }
 };
 </script>
 

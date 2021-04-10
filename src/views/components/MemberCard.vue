@@ -48,6 +48,6 @@
 <script>
 export default {
   name: 'MemberCard',
-  props: ['member'],
+  props: ['member']
 };
 </script>

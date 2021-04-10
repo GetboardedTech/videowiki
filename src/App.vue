@@ -54,13 +54,13 @@ export default {
     return {
       vueAppClasses: [],
       login: true,
-      hideScrollToTop: themeConfig.hideScrollToTop
+      hideScrollToTop: themeConfig.hideScrollToTop,
     };
   },
   components: {
     Login,
     Register,
-    BackToTop
+    BackToTop,
   },
   watch: {
     '$store.state.theme'(val) {
@@ -102,6 +102,7 @@ export default {
     },
     handleWindowResize() {
       this.$store.commit('UPDATE_WINDOW_WIDTH', window.innerWidth);
+      this.$store.commit('UPDATE_WINDOW_HEIGHT', window.innerHeight);
 
       // Set --vh property
       document.documentElement.style.setProperty(
@@ -116,7 +117,6 @@ export default {
   mounted() {
     this.toggleClassInBody(themeConfig.theme);
     this.$store.commit('UPDATE_WINDOW_WIDTH', window.innerWidth);
-
     const vh = window.innerHeight * 0.01;
     // Then we set the value in the --vh custom property to the root of the document
     document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -124,7 +124,9 @@ export default {
   async created() {
     const dir = this.$vs.rtl ? 'rtl' : 'ltr';
     document.documentElement.setAttribute('dir', dir);
-
+    if (window.location !== window.parent.location) {
+      this.$store.commit('SET_IFRAME_STATUS', true);
+    }
     window.addEventListener('resize', this.handleWindowResize);
     window.addEventListener('scroll', this.handleScroll);
   },
@@ -134,3 +136,8 @@ export default {
   },
 };
 </script>
+<style>
+input {
+  font-family: Montserrat;
+}
+</style>

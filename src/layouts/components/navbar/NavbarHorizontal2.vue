@@ -25,31 +25,40 @@
           />
           <div class="flex items-center -mx-3">
             <div
-              class="lg:flex md:flex hidden items-center -mx-3 px-3"
+              class="lg:flex md:flex hidden items-center -mx-base px-3"
               id="navBar"
             >
-              <div class="navItem px-4">
+              <div class="navItem px-base">
                 <router-link
                   to="/"
-                  class="text-dark text-2xl hover-link"
+                  class="text-dark text-2xl hover-link relative"
                   exact-active-class="link-active"
-                  >Content</router-link
-                >
+                  >Content
+                  <vs-chip class="absolute create-chip">
+                    <span class="text-primary font-bold">CREATE</span>
+                  </vs-chip>
+                </router-link>
               </div>
-              <div class="navItem px-4">
+              <!--div class="navItem px-base">
                 <router-link
                   to="/dashboard"
-                  class="text-dark text-2xl hover-link"
+                  class="text-dark text-2xl hover-link relative"
                   exact-active-class="link-active"
-                  >Curriculums</router-link
+                  >Course
+                  <vs-chip class="absolute create-chip">
+                    <span class="text-primary font-bold">CREATE</span>
+                  </vs-chip></router-link
                 >
-              </div>
-              <div class="navItem px-4">
+              </div-->
+              <div class="navItem px-base">
                 <router-link
                   to="/classroom"
-                  class="text-dark text-2xl hover-link"
+                  class="text-dark text-2xl hover-link relative"
                   exact-active-class="link-active"
-                  >Classroom</router-link
+                  >Class
+                  <vs-chip class="absolute create-chip">
+                    <span class="text-primary font-bold">CREATE</span>
+                  </vs-chip></router-link
                 >
               </div>
             </div>
@@ -103,12 +112,27 @@ export default {
   padding-left: 120px!important;
   padding-right: 15px!important;*/
 }
+.create-chip {
+  top: -13px;
+  left: -45px;
+  min-height: 16px !important;
+  visibility: hidden;
+}
+.create-chip span {
+  font-size: 8px;
+}
 #navBar {
   .link-active {
     font-weight: bold;
   }
+  .link-active .create-chip {
+    visibility: visible;
+  }
 }
-div.navItem :hover {
+.navItem a:hover {
   font-weight: bold;
+}
+.navItem a:hover .create-chip {
+  visibility: visible;
 }
 </style>

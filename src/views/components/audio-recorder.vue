@@ -146,7 +146,7 @@ export default {
           this.resetTimer();
 
           this.recordingInProcess = false;
-          //console.log(buffer, blob);
+          // console.log(buffer, blob);
 
           this.toBase64(blob)
             .then(res => {
@@ -160,7 +160,7 @@ export default {
                 lastModified: Date.now(),
               }
             ); */
-              //console.log(file);
+              // console.log(file);
 
               /* const li = document.createElement('li');
             const url = URL.createObjectURL(file);
@@ -181,7 +181,7 @@ export default {
               element.innerHTML = '';
               element.appendChild(childList[idx]);
             }); */
-              //this.button.textContent = this.$t('studio.voice.v4');
+              // this.button.textContent = this.$t('studio.voice.v4');
               /* this.button.innerHTML = `<i class="vs-icon notranslate icon-scale material-icons 20px" style="width: 20px; height: 20px; font-size: 20px;">replay</i>`;
             const url = URL.createObjectURL(this.audioFile);
             const audioObj = {
@@ -228,7 +228,7 @@ export default {
       var dataObj = {
         audio: this.audioBlob
       };
-      //fd.append('audio', this.audioFile);
+      // fd.append('audio', this.audioFile);
       let videoUrl = '';
       if (
         this.$store.state.studio.preparedScenesVideos[
@@ -256,7 +256,7 @@ export default {
           this.$Progress.finish();
           this.$vs.loading.close();
           console.log('done', res.data.url);
-          //this.f(res.data.url);
+          // this.f(res.data.url);
         })
         .catch(err => {
           console.log(err);

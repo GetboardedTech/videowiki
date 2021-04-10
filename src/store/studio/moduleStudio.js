@@ -7,7 +7,7 @@
   Studioor URL: http://www.themeforest.net/user/pixinvent
 ========================================================================================== */
 
-//import state from './moduleStudioState.js';
+// import state from './moduleStudioState.js';
 import mutations from './moduleStudioMutations.js';
 import actions from './moduleStudioActions.js';
 import getters from './moduleStudioGetters.js';

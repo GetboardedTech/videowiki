@@ -125,9 +125,6 @@
 <script>
 import axios from '../axios';
 import constants from '../../constant';
-// import web3 from '../../web3';
-// import createVideo from '../../createVideo';
-// import Upload from '../../build/Upload.json';
 
 export default {
   data() {

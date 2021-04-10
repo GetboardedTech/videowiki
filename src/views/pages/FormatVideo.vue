@@ -10,8 +10,8 @@
       alt="screen-resolution"
       class="shadow responsive card-img-top"
       :style="cardStyle"
-      width={videoWidth}
-      height={videoHeight}
+      width="{videoWidth}"
+      height="{videoHeight}"
     />
     <!-- <vx-card
       v-for="(s, indexs) in $store.state.studio.scenes"

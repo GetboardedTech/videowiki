@@ -249,6 +249,38 @@
             >
           </div>
         </div>
+        <div class="vx-card h-full overflow-hidden grid-item">
+          <div
+            slot="no-body"
+            class="bg-card-4 flex items-center justify-center inner-grid-item"
+          >
+            <img
+              src="@/assets/images/pages/awards9.svg"
+              alt="Not Found"
+              width="136px"
+            />
+          </div>
+          <div class="card-body">
+            <p class="mb-2 text-base font-semibold">
+              VideoWiki(TCH Protocol)
+            </p>
+            <p class="mb-3 text-base">
+              An open content editing platform that powers the creation and
+              monetization of content while prioritizing IP protection. The Team
+              recognized the need for simple text-to-video content creation to
+              benefit the rise of online learning and enable more immersive
+              learning experience.
+            </p>
+            <vs-button
+              :href="
+                `https://twitter.com/oceanprotocol/status/1356921263952977922/photo/1`
+              "
+              target="_blank"
+              type="filled"
+              >Read More</vs-button
+            >
+          </div>
+        </div>
       </div>
     </div>
     <div class="section">
@@ -315,6 +347,9 @@ export default {
   .grid-container .grid-item:nth-child(6) .inner-grid-item {
     grid-column-start: 2;
   }
+  .grid-container .grid-item:nth-child(7) .inner-grid-item {
+    grid-column-start: 2;
+  }
   .grid-container .grid-item:nth-child(1) {
     grid-row: span 2;
   }
@@ -332,6 +367,10 @@ export default {
   }
   .grid-container .grid-item:nth-child(5) {
     grid-row: span 2;
+  }
+  .grid-container .grid-item:nth-child(7) {
+    grid-column: none;
+    grid-column-start: 2;
   }
 }
 </style>

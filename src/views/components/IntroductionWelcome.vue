@@ -27,10 +27,15 @@
           <h1 class="mb-4">Anytime, Anywhere Learning</h1>
           <h4 class="mb-8">Teachers And Students Collaboration</h4>
           <box-search></box-search>
-          <br>
-          <h4 class="mb-8">Just paste your script and let AI create <br> engaging immersive video course for you to teach.</h4>
+          <br />
+          <h4 class="mb-8">
+            Just paste your script and let AI create <br />
+            engaging immersive video course for you to teach.
+          </h4>
           <div class="aligncenter">
-            <vs-button size="medium" :disabled="btndisable" @click="blockchain">Create A New Video</vs-button>
+            <vs-button size="medium" :disabled="btndisable" @click="blockchain"
+              >Create A New Video</vs-button
+            >
           </div>
           <!-- <vs-row vs-w="12" class="p-4 center">
             <vs-col>

@@ -26,7 +26,7 @@ const userDefaults = {
   userRole: 'user'
 };
 
-//const userInfoLocalStorage = JSON.parse(localStorage.getItem('userInfo')) || {};
+// const userInfoLocalStorage = JSON.parse(localStorage.getItem('userInfo')) || {};
 
 // Set default values for active-user
 // More data can be added by auth provider or other plugins/packages
@@ -86,6 +86,7 @@ const state = {
   verticalNavMenuWidth: 'default',
   verticalNavMenuItemsMin: false,
   scrollY: 0,
+  insideIframe: false,
   starredPages: navbarSearchAndPinList.pages.data.filter(
     page => page.is_bookmarked
   ),
@@ -95,10 +96,13 @@ const state = {
   // Can be used to get current window with
   // Note: Above breakpoint state is for internal use of sidebar & navbar component
   windowWidth: null,
+  windowHeight: null,
   globalProgressBar: true,
-  
+
   // wallet
-  isWalletConnected: false
+  accountAddress: null,
+  isWalletConnected: false,
+  currentTransactionStep: 1
 };
 
 export default state;

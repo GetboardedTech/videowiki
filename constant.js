@@ -1,9 +1,9 @@
 const constants = {
-  apiUrl: 'https://dapi.videowiki.pt',
-  url: 'https://videowiki.pt'
+  apiUrl: 'https://dev.api.videowiki.pt',
+  url: 'https://dev.videowiki.pt'
 };
 if (process.env.NODE_ENV === 'production') {
-  constants.apiUrl = 'https://dapi.videowiki.pt';
-  constants.url = 'https://videowiki.pt';
+  constants.apiUrl = 'https://dev.api.videowiki.pt';
+  constants.url = 'https://dev.videowiki.pt';
 }
 export default constants;

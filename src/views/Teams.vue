@@ -33,102 +33,142 @@
                 <h3 class="mb-6 lg:text-left text-center">
                   Join Our Volunteer Team
                 </h3>
-                <div class="vx-row -m-2">
-                  <div class="vx-col w-1/2 p-2">
-                    <h6 class="mb-4">
-                      Full Name<span class="text-danger">*</span>
-                    </h6>
-                    <!--input
+                <form id="volunteer-form">
+                  <div class="vx-row -m-2">
+                    <div class="vx-col w-1/2 p-2">
+                      <div class="mb-4">
+                        <h6>Full Name<span class="text-danger">*</span></h6>
+                        <div class="h-2">
+                          <span
+                            class="text-danger text-sm"
+                            v-show="errors.has('fullName')"
+                            >{{ errors.first('fullName') }}</span
+                          >
+                        </div>
+                      </div>
+                      <!--input
                       class="w-full base-input"
                       type="text"
                       placeholder="Enter your full name.."
                     /-->
-                    <vs-input
-                      placeholder="Enter your FullName"
-                      v-model="fullName"
-                      class="w-full"
-                    />
-                  </div>
-                  <div class="vx-col w-1/2 p-2">
-                    <h6 class="mb-4">
-                      Email<span class="text-danger">*</span>
-                    </h6>
-                    <!--input
+                      <vs-input
+                        placeholder="Enter your FullName"
+                        v-validate="'required|alpha_spaces'"
+                        name="fullName"
+                        v-model="fullName"
+                        class="w-full"
+                      />
+                    </div>
+                    <div class="vx-col w-1/2 p-2">
+                      <div class="mb-4">
+                        <h6>Email<span class="text-danger">*</span></h6>
+                        <div class="h-2">
+                          <span
+                            class="text-danger text-sm"
+                            v-show="errors.has('email')"
+                            >{{ errors.first('email') }}</span
+                          >
+                        </div>
+                      </div>
+                      <!--input
                       class="w-full base-input"
                       type="Email"
                       placeholder="Enter your email.."
                     /-->
-                    <vs-input
-                      class="w-full"
-                      type="email"
-                      v-model="email"
-                      placeholder="Enter your Email"
-                    />
-                  </div>
-                  <div class="vx-col w-1/2 p-2">
-                    <h6 class="mb-4">
-                      Contact<span class="text-danger">*</span>
-                    </h6>
-                    <!--input
+                      <vs-input
+                        class="w-full"
+                        type="email"
+                        v-validate="'required|email'"
+                        name="email"
+                        v-model="email"
+                        placeholder="Enter your Email"
+                      />
+                    </div>
+                    <div class="vx-col w-1/2 p-2">
+                      <div class="mb-4">
+                        <h6>Contact<span class="text-danger">*</span></h6>
+                        <div class="h-2">
+                          <span
+                            class="text-danger text-sm"
+                            v-show="errors.has('contact')"
+                            >{{ errors.first('contact') }}</span
+                          >
+                        </div>
+                      </div>
+                      <!--input
                       class="w-full base-input"
                       type="Email"
                       placeholder="Enter your mobile number.."
                     /-->
-                    <vs-input
-                      class="w-full"
-                      type="tel"
-                      pattern="[0-9]{10}"
-                      maxLength="10"
-                      v-model="mob"
-                      placeholder="Enter your Mobile Number"
-                    />
-                  </div>
-                  <div class="vx-col w-1/2 p-2">
-                    <h6 class="mb-4">
-                      Resume<span class="text-danger">*</span>
-                    </h6>
-                    <vx-input-group class="mb-base">
                       <vs-input
-                        placeholder="resume.pdf"
-                        :value="selectedFile.name"
-                        disabled
+                        class="w-full"
+                        type="tel"
+                        pattern="[0-9]{10}"
+                        v-validate="'required|numeric|min:10|max:10'"
+                        maxLength="10"
+                        name="contact"
+                        v-model="mob"
+                        placeholder="Enter your Mobile Number"
                       />
-                      <input
-                        type="file"
-                        class="hidden"
-                        ref="FileInput"
-                        accept=".pdf"
-                        @change="selectFile"
-                      />
-                      <template slot="append">
-                        <div class="append-text btn-addon">
-                          <vs-button
-                            class="bg-custom-purple"
-                            @click="$refs.FileInput.click()"
-                            >Choose File</vs-button
+                    </div>
+                    <div class="vx-col w-1/2 p-2">
+                      <div class="mb-4">
+                        <h6>Resume<span class="text-danger">*</span></h6>
+                        <div class="h-2">
+                          <span
+                            class="text-danger text-sm"
+                            v-show="errors.has('resume')"
+                            >{{ errors.first('resume') }}</span
                           >
                         </div>
-                      </template>
-                    </vx-input-group>
+                      </div>
+                      <vx-input-group class="mb-base">
+                        <vs-input
+                          placeholder="resume.pdf"
+                          :value="selectedFile.name"
+                          disabled
+                        />
+                        <input
+                          type="file"
+                          class="hidden"
+                          ref="FileInput"
+                          accept=".pdf"
+                          name="resume"
+                          v-validate="'required'"
+                          @change="selectFile"
+                        />
+                        <template slot="append">
+                          <div class="append-text btn-addon">
+                            <vs-button
+                              class="bg-custom-purple"
+                              @click="$refs.FileInput.click()"
+                              >Choose File</vs-button
+                            >
+                          </div>
+                        </template>
+                      </vx-input-group>
+                    </div>
                   </div>
-                </div>
-                <div class="vx-row mb-6">
-                  <div class="vx-col w-full">
-                    <h6 class="mb-4">Short Description About You</h6>
-                    <textarea
-                      class="message-box"
-                      v-model="description"
-                      placeholder="Enter your message here.."
-                    />
+                  <div class="vx-row mb-6">
+                    <div class="vx-col w-full">
+                      <h6 class="mb-4">Short Description About You</h6>
+                      <textarea
+                        class="message-box"
+                        v-model="description"
+                        placeholder="Enter your message here.."
+                      />
+                    </div>
                   </div>
-                </div>
-                <div class="text-center">
-                  <vs-button
-                    type="filled"
-                    class="font-bold text-base bg-custom-purple"
-                    >Submit</vs-button
-                  >
-                </div>
+                  <div class="text-center">
+                    <vs-button
+                      type="filled"
+                      class="font-bold text-base bg-custom-purple"
+                      @click.prevent="handleSubmitForm"
+                      :disabled="submitInProgress"
+                      >Submit</vs-button
+                    >
+                  </div>
+                </form>
               </div>
             </div>
           </div>
@@ -146,12 +186,14 @@ import Map from './components/Map';
 import NewsLetter from './components/NewsLetter';
 import { teamList } from './components/localDb';
 import MemberCard from './components/MemberCard';
+import { ajaxCallMixin } from '@/http/HttpCommon';
 export default {
   name: 'Teams',
+  mixins: [ajaxCallMixin],
   components: {
     Map,
     NewsLetter,
-    MemberCard,
+    MemberCard
   },
   data() {
     return {
@@ -160,6 +202,7 @@ export default {
       mob: '',
       description: '',
       selectedFile: '',
+      submitInProgress: false
     };
   },
   computed: {
@@ -171,7 +214,50 @@ export default {
     selectFile(event) {
       this.selectedFile = event.target.files[0];
     },
-  },
+    handleSubmitForm() {
+      this.$validator.validateAll().then(result => {
+        if (result) {
+          const data = {};
+          data.name = this.fullName;
+          data.email = this.email;
+          data.contact = this.mob;
+          data.description = this.description;
+          data.resume = this.selectedFile;
+          const url = '/community/volunteer/';
+          this.submitInProgress = true;
+          this.ajaxCall(url, data, this.callbackSubmit);
+        } else {
+          this.$vs.notify({
+            title: 'Invalid Input',
+            text: 'Please fill all the required fields correctly',
+            color: 'danger'
+          });
+        }
+      });
+    },
+    callbackSubmit(apiResponse) {
+      if (apiResponse.status === 409) {
+        this.$vs.notify({
+          title: 'Alert',
+          text: 'We have your response, Stay tuned.',
+          color: 'warning'
+        });
+      } else if (apiResponse.status === 200) {
+        this.$vs.notify({
+          title: 'Success',
+          text: 'We got your response',
+          color: 'success'
+        });
+        this.fullName = '';
+        this.email = '';
+        this.mob = '';
+        this.selectedFile = '';
+        this.description = '';
+        this.$validator.reset();
+      }
+      this.submitInProgress = false;
+    }
+  }
 };
 </script>
 
@@ -185,7 +271,7 @@ export default {
   /* border: none; */
   /* background: #f3f4f6; */
   border-color: rgba(0, 0, 0, 0.2);
-  font-size: 12px !important;
+  font-size: 14px !important;
   overflow-y: auto;
   border-radius: 6px;
   color: #626262;

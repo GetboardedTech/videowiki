@@ -17,8 +17,10 @@ const getDefaultState = () => {
       url: '',
       published_id: null,
       isPaid: false,
-      txData: null
+      txData: null,
+      fromPPT: false
     },
+    tabIndex: 0,
     videoScript: '',
     backgroundMusic: {},
     sourceLanguage: 'en',
@@ -34,18 +36,18 @@ const getDefaultState = () => {
     activeSceneInLibrary: 1,
     activeSceneInScenes: 1,
     keywords: {}, // 2
-    videos: {},  // 3
+    videos: {}, // 3
     images: {},
     audioList: {},
     invalidScenes: [],
     searchedVideos: {},
-    searchedImages: {},  // 4
+    searchedImages: {}, // 4
 
     currentActiveScene: 1,
 
     selectedFromLibraryVideos: [], // 5
     // sceneImage: [],
-    uploadedVideos: [], // 6
+    uploadedMedia: [], // 6
     videoWidth: null,
     videoHeight: null,
     preparedScenesVideos: [],
@@ -54,14 +56,9 @@ const getDefaultState = () => {
     uploadedAudios: [],
     addedAudioVideos: [],
     styleVideos: [],
+    sceneTransition: [],
     previewVideo: null,
     tags: [],
-    steps: {
-      Script: true,
-      Scenes: true,
-      Subtitles: false,
-      Narration: false
-    },
     skipSubtitles: false,
     skipMusic: false
   };

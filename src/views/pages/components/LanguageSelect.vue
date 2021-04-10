@@ -53,11 +53,11 @@
 export default {
   name: 'LanguageSelect',
   props: {
-    value: String,
+    value: String
   },
   data() {
     return {
-      locale: this.value,
+      locale: this.value
     };
   },
   computed: {
@@ -71,13 +71,13 @@ export default {
       else if (locale === 'fr') return { flag: 'fr', lang: 'French' };
       else if (locale === 'de') return { flag: 'de', lang: 'German' };
       else return { flag: 'en', lang: 'English' };
-    },
+    }
   },
   methods: {
     updateLocale(locale) {
       this.locale = locale;
       this.$emit('input', locale);
-    },
-  },
+    }
+  }
 };
 </script>

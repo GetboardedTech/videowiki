@@ -91,25 +91,25 @@ export default {
         {
           title: 'Interactive Learning',
           desc:
-            'Video conferencing becomes a source of one-way communication and students don’t have a standard platform for interaction and interactive learning.',
+            'Video conferencing becomes a source of one-way communication and students don’t have a standard platform for interaction and interactive learning.'
         },
         {
           title: 'Online Classrooms',
           desc:
-            'It’s difficult for someone to keep on concentrating for hours and hence online classrooms become boring and hard to focus on.',
+            'It’s difficult for someone to keep on concentrating for hours and hence online classrooms become boring and hard to focus on.'
         },
         {
           title: 'Quick Memorization',
           desc:
-            'The content isn’t associated with proper visual effects, which would help students in a proper understanding of the topic and quick memorization.',
+            'The content isn’t associated with proper visual effects, which would help students in a proper understanding of the topic and quick memorization.'
         },
         {
           title: 'Feedback',
-          desc: 'Lack of a robust feedback system',
-        },
-      ],
+          desc: 'Lack of a robust feedback system'
+        }
+      ]
     };
-  },
+  }
 };
 </script>
 <style scoped>

@@ -30,7 +30,7 @@ export default {
   components: {
     NavbarHorizontal,
     VNavMenu,
-    TheFooter,
+    TheFooter
   },
   computed: {
     navMenuItems() {

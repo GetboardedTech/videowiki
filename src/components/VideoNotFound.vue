@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center justify-center">
-    <vue-progress-bar class="absolute"></vue-progress-bar>
+    <!--vue-progress-bar class="absolute"></vue-progress-bar-->
     <div class="flex items-center justify-center">
       <vs-button
         type="filled"
@@ -28,7 +28,7 @@
         <div class="w-1/5 p-3">
           <vx-card
             class="effect-card bg-primary text-white"
-            @click="selectImage(currentUploadedImage, 'none')"
+            @click="selectImage('None')"
           >
             <div class="-m-3 text-center">
               <vs-icon icon="not_interested" size="45px" />
@@ -39,7 +39,7 @@
         <div class="w-1/5 p-3">
           <vx-card
             class="effect-card bg-primary text-white"
-            @click="selectImage(currentUploadedImage, 'in')"
+            @click="selectImage('in')"
           >
             <div class="-m-3 text-center">
               <vs-icon icon="zoom_in" size="45px" />
@@ -50,7 +50,7 @@
         <div class="w-1/5 p-3">
           <vx-card
             class="effect-card bg-primary text-white"
-            @click="selectImage(currentUploadedImage, 'out')"
+            @click="selectImage('out')"
           >
             <div class="-m-3 text-center">
               <vs-icon icon="zoom_out" size="45px" />
@@ -63,68 +63,42 @@
   </div>
 </template>
 <script>
-import VideoPreview from '../layouts/components/vertical-nav-menu/PanelItems/components/VideoPreview';
-import ImagePreview from '../layouts/components/vertical-nav-menu/PanelItems/components/ImagePreview';
 export default {
   name: 'VideoNotFound',
   props: ['sceneNum'],
-  components: {
-    VideoPreview,
-    ImagePreview,
-  },
   data() {
     return {
       showEffectModal: false,
-      currentUploadedImage: null,
-      searchQuery: '',
-      searchInProgress: false,
-      media: 'video',
-      selectedVideo: {},
+      currentUploadedImage: null
     };
   },
-  computed: {
-    searchedVideos() {
-      return this.$store.state.studio.searchedVideos;
-    },
-    searchedImages() {
-      return this.$store.state.studio.searchedImages;
-    },
-    keywords() {
-      return this.$store.state.studio.keywords;
-    },
-  },
   methods: {
-    selectImage(img, zoomType) {
+    selectImage(zoomType) {
       this.showEffectModal = false;
-      this.showSearchModal = false;
       const dataObj = {
-        image_url: img,
-        zoom: zoomType,
-        sceneNum: this.sceneNum,
+        image_url: this.currentUploadedImage,
+        zoom: zoomType
       };
       this.$vs.loading({
-        color: 'transparent',
-        container: `#upload_scene_${this.sceneNum}`,
+        container: `#upload_scene_${this.sceneNum}`
       });
-      this.$store.commit('TOGGLE_PROGRESS_BAR', false);
-      this.$Progress.start();
+      // this.$Progress.start();
       this.$store
         .dispatch('studio/addMotionToImage', dataObj)
-        .then(() => {
-          this.$Progress.finish();
-          this.$vs.loading.close();
+        .then(data => {
+          this.$store.commit('studio/selectVideo', {
+            value: data.url,
+            sceneNum: this.sceneNum
+          });
         })
         .catch(() => {
-          this.$Progress.fail();
-          this.$vs.loading.close();
+          // this.$Progress.fail();
+          // this.$vs.loading.close();
         })
         .finally(() => {
           this.$vs.loading.close(
             `#upload_scene_${this.sceneNum} > .con-vs-loading`
           );
-          setTimeout(() => {
-            this.$store.commit('TOGGLE_PROGRESS_BAR', true);
-          }, 1000);
         });
     },
     chooseFile() {
@@ -133,49 +107,39 @@ export default {
     uploadFile(event) {
       const selectedFile = event.target.files[0];
       this.$vs.loading({
-        color: 'transparent',
-        container: `#upload_scene_${this.sceneNum}`,
+        container: `#upload_scene_${this.sceneNum}`
       });
-      this.$store.commit('TOGGLE_PROGRESS_BAR', false);
-      this.$Progress.start();
-      // this.$vs.loading({ color: 'transparent' });
       this.$store
         .dispatch('studio/uploadMedia', selectedFile)
-        .then((url) => {
-          this.$Progress.finish();
+        .then(url => {
           if (selectedFile.type.split('/')[0] === 'video') {
             this.$store.commit('studio/selectVideo', {
               sceneNum: this.sceneNum,
-              value: url,
+              value: url
             });
           } else {
             this.showEffectModal = true;
           }
           this.currentUploadedImage = url;
           const dataObj = {
-            sceneNum: this.sceneNum - 1,
-            value: [selectedFile.name, url],
+            fileName: selectedFile.name,
+            url
           };
-          this.$store.commit('studio/setUploadedVideos', dataObj);
+          this.$store.commit('studio/setUploadedMedia', dataObj);
         })
         .catch(() => {
-          this.$Progress.fail();
-          //this.$vs.loading.close();
           this.$vs.notify({
             title: 'Error Occured',
-            text: 'video upload failed',
-            color: 'danger',
+            text: 'Media upload failed',
+            color: 'danger'
           });
         })
         .finally(() => {
           this.$vs.loading.close(
             `#upload_scene_${this.sceneNum} > .con-vs-loading`
           );
-          setTimeout(() => {
-            this.$store.commit('TOGGLE_PROGRESS_BAR', true);
-          }, 1000);
         });
-    },
+    }
   }
 };
 </script>

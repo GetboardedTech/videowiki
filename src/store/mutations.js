@@ -99,8 +99,14 @@ const mutations = {
   UPDATE_WINDOW_WIDTH(state, width) {
     state.windowWidth = width;
   },
+  UPDATE_WINDOW_HEIGHT(state, height) {
+    state.windowHeight = height;
+  },
   UPDATE_WINDOW_SCROLL_Y(state, val) {
     state.scrollY = val;
+  },
+  SET_IFRAME_STATUS(state, value) { 
+    state.insideIframe = value;
   },
 
   // /////////////////////////////////////////////
@@ -130,12 +136,16 @@ const mutations = {
     state.AppActiveUser = payload;
   },
 
-  CONNECT(state) {
+  CONNECT(state, accountAddress) {
+    state.accountAddress = accountAddress;
     state.isWalletConnected = true;
   },
 
   DISCONNECT(state) {
     state.isWalletConnected = false;
+  },
+  SET_CURRENT_TRANSACTION_STEP(state, value) {
+    state.currentTransactionStep = value;
   }
 };
 

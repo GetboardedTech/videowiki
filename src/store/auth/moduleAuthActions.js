@@ -47,17 +47,17 @@ export default {
           // If there's user data in response
           if (response.data.userData) {
             // Navigate User to homepage
-            //router.push(router.currentRoute.query.to || '/');
+            // router.push(router.currentRoute.query.to || '/');
 
             // Set accessToken
             localStorage.setItem('accessToken', response.data.accessToken);
 
             // Update user details
-            /*const userData = {
+            /* const userData = {
               uid: 0,
               displayName: response.data.userData.profile.display_name,
               about: ''
-            };*/
+            }; */
             const userData = response.data.userData;
             commit('UPDATE_USER_INFO', userData, { root: true });
 

@@ -134,62 +134,62 @@ export default {
         {
           title: 'Learning Outcomes',
           desc:
-            'By 2030, ensure that all girls and boys complete free, equitable, and quality primary and secondary education leading to relevant and Goal-4 effective learning outcomes.',
+            'By 2030, ensure that all girls and boys complete free, equitable, and quality primary and secondary education leading to relevant and Goal-4 effective learning outcomes.'
         },
         {
           title: 'Primary Education',
           desc:
-            'By 2030, ensure that all girls and boys have access to quality early childhood development, care, and pre-primary education so that they are ready for primary education.',
+            'By 2030, ensure that all girls and boys have access to quality early childhood development, care, and pre-primary education so that they are ready for primary education.'
         },
         {
           title: 'Tertiary Education',
           desc:
-            'By 2030, ensure equal access for all women and men to affordable and quality technical, vocational and tertiary education, including university.',
+            'By 2030, ensure equal access for all women and men to affordable and quality technical, vocational and tertiary education, including university.'
         },
         {
           title: 'Achieve Literacy',
           desc:
-            'By 2030, ensure that all youth and a substantial proportion of adults, both men, and women, achieve literacy and numeracy.',
+            'By 2030, ensure that all youth and a substantial proportion of adults, both men, and women, achieve literacy and numeracy.'
         },
         {
           title: 'Gender Disparities',
           desc:
-            'By 2030, eliminate gender disparities in education and ensure equal access to all levels of education and vocational training for the vulnerable, including persons with disabilities, indigenous peoples, and children in vulnerable situations.',
+            'By 2030, eliminate gender disparities in education and ensure equal access to all levels of education and vocational training for the vulnerable, including persons with disabilities, indigenous peoples, and children in vulnerable situations.'
         },
         {
           title: 'Entrepreneurship',
           desc:
-            'By 2030, substantially increase the number of youth and adults who have relevant skills, including technical and vocational skills, for employment, decent jobs, and entrepreneurship.',
+            'By 2030, substantially increase the number of youth and adults who have relevant skills, including technical and vocational skills, for employment, decent jobs, and entrepreneurship.'
         },
         {
           title: 'Higher Education',
           desc:
-            'By 2020, substantially expand globally the number of scholarships available to developing countries, in particular, least developed countries, small island developing states, and African countries, for enrolment in higher education, including vocational training and information and communications technology, technical, engineering, and scientific programs, in developed countries and other developing countries.',
+            'By 2020, substantially expand globally the number of scholarships available to developing countries, in particular, least developed countries, small island developing states, and African countries, for enrolment in higher education, including vocational training and information and communications technology, technical, engineering, and scientific programs, in developed countries and other developing countries.'
         },
         {
           title: 'Sustainable Development',
           desc:
-            'By 2030, ensure that all learners acquire the knowledge and skills needed to promote sustainable development, including, among others, through education for sustainable development and sustainable lifestyles, human rights, gender equality, promotion of a culture of peace and non-violence, global citizenship, and appreciation of cultural diversity and of culture’s contribution to sustainable development.',
+            'By 2030, ensure that all learners acquire the knowledge and skills needed to promote sustainable development, including, among others, through education for sustainable development and sustainable lifestyles, human rights, gender equality, promotion of a culture of peace and non-violence, global citizenship, and appreciation of cultural diversity and of culture’s contribution to sustainable development.'
         },
         {
           title: 'Learning Environments',
           desc:
-            'Build and upgrade education facilities that are child, disability, and gender-sensitive and provide safe, nonviolent, inclusive, and effective learning environments for all.',
+            'Build and upgrade education facilities that are child, disability, and gender-sensitive and provide safe, nonviolent, inclusive, and effective learning environments for all.'
         },
         {
           title: 'Developing Island',
           desc:
-            'By 2030, substantially increase the supply of qualified teachers, including through international co‑operation for teacher training in developing countries, especially the least developed countries and small island developing states.',
-        },
-      ],
+            'By 2030, substantially increase the supply of qualified teachers, including through international co‑operation for teacher training in developing countries, especially the least developed countries and small island developing states.'
+        }
+      ]
     };
   },
   methods: {
     bulletNumber(index) {
       if (index + 1 < 10) return `0${index + 1}`;
       return `${index + 1}`;
-    },
-  },
+    }
+  }
 };
 </script>
 <style scoped>

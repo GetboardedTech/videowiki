@@ -99,11 +99,11 @@ import VideoCard from '@/views/components/VideoCard';
 export default {
   name: 'Learning',
   components: {
-    VideoCard,
+    VideoCard
   },
   data() {
     return {};
-  },
+  }
 };
 </script>
 <style scoped>

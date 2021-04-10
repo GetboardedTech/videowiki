@@ -36,8 +36,8 @@ import LoginJwt from './LoginJWT.vue';
 
 export default {
   components: {
-    LoginJwt,
-  },
+    LoginJwt
+  }
 };
 </script>
 

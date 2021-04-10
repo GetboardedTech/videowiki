@@ -19,19 +19,23 @@ export default {
   methods: {
     playScene(event) {
       const videoElement = event.target;
-      videoElement.currentTime = 0;
-      videoElement.play();
+      if (videoElement.error == null) {
+        videoElement.currentTime = 0;
+        videoElement.play();
+      }
     },
     pauseScene(event) {
       const videoElement = event.target;
-      videoElement.pause();
+      if (videoElement.error == null) {
+        videoElement.pause();
+      }
       /* const playPromise = videoElement.play();
       if (playPromise !== undefined) {
         playPromise.then(() => {
           videoElement.pause();
         });
       } */
-    },
-  },
+    }
+  }
 };
 </script>

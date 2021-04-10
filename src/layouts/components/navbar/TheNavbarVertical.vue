@@ -9,7 +9,7 @@
 ========================================================================================== -->
 
 <template>
-  <div class="relative">
+  <div v-if="!insideIframe" class="relative">
     <div class="vx-navbar-wrapper" :class="classObj">
       <vs-navbar
         class="vx-navbar navbar-custom navbar-skelton"
@@ -32,23 +32,10 @@
         <!--<search-bar />-->
 
         <!--        <notification-drop-down />-->
-        <div class="flex mr-4">
-          <vs-button
-            v-if="!this.$store.state.isWalletConnected"
-            class="bg-custom-purple text-base font-bold"
-            type="filled"
-            @click="connect"
-            >Connect Wallet</vs-button
-          >
-          <vs-button
-            v-else
-            class="bg-custom-purple text-base font-bold"
-            type="filled"
-            @click="disconnect"
-            >Disconnect</vs-button
-          >
+        <div class="flex mr-4 flex-wrap">
+          <wallet />
         </div>
-        <profile-drop-down v-if="isUserLoggedIn()" />
+        <profile-drop-down v-if="accessToken" />
         <vs-button
           v-else
           class="bg-custom-purple font-bold"
@@ -68,14 +55,15 @@ import SearchBar from './components/SearchBar.vue';
 import NotificationDropDown from './components/NotificationDropDown.vue';
 import ProfileDropDown from './components/ProfileDropDown.vue';
 import { mapState } from 'vuex';
+import Wallet from './components/Wallet.vue';
 
 export default {
   name: 'the-navbar-vertical',
   props: {
     navbarColor: {
       type: String,
-      default: '#fff',
-    },
+      default: '#fff'
+    }
   },
   components: {
     Bookmarks,
@@ -83,6 +71,7 @@ export default {
     SearchBar,
     NotificationDropDown,
     ProfileDropDown,
+    Wallet
   },
   computed: {
     ...mapState('auth', ['isUserLoggedIn', 'accessToken']),
@@ -96,7 +85,7 @@ export default {
         'text-white':
           (this.navbarColor != '#10163a' &&
             this.$store.state.theme === 'dark') ||
-          (this.navbarColor != '#fff' && this.$store.state.theme !== 'dark'),
+          (this.navbarColor != '#fff' && this.$store.state.theme !== 'dark')
       };
     },
     windowWidth() {
@@ -104,23 +93,30 @@ export default {
     },
     // NAVBAR STYLE
     classObj() {
-      if (this.$store.state.verticalNavMenuWidt === 'default')
-        return 'navbar-default';
+      let classStr = '';
+      if (this.$store.state.insideIframe) {
+        classStr += 'reduced-width-iframe ';
+      }
+      if (this.$store.state.verticalNavMenuWidth === 'default')
+        classStr += 'navbar-default ';
       else if (this.$store.state.verticalNavMenuWidth === 'reduced')
-        return 'navbar-reduced';
-      else return 'navbar-full';
+        classStr += 'navbar-reduced ';
+      else classStr += 'navbar-full';
+      return classStr;
     },
+    insideIframe() {
+      return this.$store.state.insideIframe;
+    }
   },
   methods: {
     showSidebar() {
       this.$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE_STUDIO', true);
-    },
-    connect() {
-      this.$store.dispatch('connectWallet');
-    },
-    disconnect() {
-      this.$store.dispatch('disconnectWallet');
-    },
-  },
+    }
+  }
 };
 </script>
+<style scoped>
+.reduced-width-iframe {
+  width: 72% !important;
+}
+</style>

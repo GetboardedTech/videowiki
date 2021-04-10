@@ -1,15 +1,16 @@
-/*=========================================================================================
+/* =========================================================================================
   File Name: router.js
   Description: Routes for vue-router. Lazy loading is enabled.
   ----------------------------------------------------------------------------------------
   Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template
   Author: Pixinvent
   Author URL: http://www.themeforest.net/user/pixinvent
-==========================================================================================*/
+========================================================================================== */
 
 import Vue from 'vue';
 import Router from 'vue-router';
-
+import FullPage from '@/layouts/full-page/FullPage.vue';
+import Landing from '@/views/Landing.vue';
 Vue.use(Router);
 
 const router = new Router({
@@ -24,7 +25,7 @@ const router = new Router({
     // =============================================================================
     {
       path: '',
-      component: () => import('@/layouts/full-page/FullPage.vue'),
+      component: FullPage,
       children: [
         // =============================================================================
         // PAGES
@@ -44,10 +45,11 @@ const router = new Router({
           meta: {
             rule: 'isPublic'
           }
-        },{
+        },
+        {
           path: '/',
           name: 'Landing',
-          component: () => import('./views/Landing2.0.vue'),
+          component: Landing,
           meta: {
             rule: 'isPublic'
           }
@@ -109,7 +111,31 @@ const router = new Router({
             rule: 'isPublic'
           }
         },
-        /*{
+        {
+          path: '/privacy-policy',
+          name: 'Privacy Policy',
+          component: () => import('./views/Privacy.vue'),
+          meta: {
+            rule: 'isPublic'
+          }
+        },
+        {
+          path: '/terms-of-use',
+          name: 'Terms of Use',
+          component: () => import('./views/Terms.vue'),
+          meta: {
+            rule: 'isPublic'
+          }
+        },
+        {
+          path: '/integration/ms-teams',
+          name: 'MsTeams',
+          component: () => import('./views/Integrations/MsTeams.vue'),
+          meta: {
+            rule: 'isPublic'
+          }
+        },
+        /* {
           path: '/register',
           name: 'Register',
           component: () => import('./views/register/Register.vue'),
@@ -124,15 +150,15 @@ const router = new Router({
           meta: {
             rule: 'isGuest'
           }
-        },*/
-        /*{
+        }, */
+        /* {
           path: '/dashboard',
           name: 'Dashboard',
           component: () => import('./views/Dashboard.vue'),
           meta: {
             rule: 'isLogged'
           }
-        },*/
+        }, */
         {
           path: '/creators',
           name: 'Creators',
@@ -175,7 +201,15 @@ const router = new Router({
         rule: 'isLogged'
       }
     },
-    { 
+    {
+      path: '/contact-us',
+      name: 'ContactUs',
+      component: () => import('./views/ContactUs.vue'),
+      meta: {
+        rule: 'isPublic'
+      }
+    },
+    {
       // =============================================================================
       // MAIN LAYOUT ROUTES
       // =============================================================================
@@ -196,11 +230,32 @@ const router = new Router({
       ]
     },
     {
+      // =============================================================================
+      // VideoWiki Class LAYOUT ROUTES
+      // =============================================================================
+      path: '',
+      component: () => import('./layouts/videowiki-class/Index.vue'),
+      children: [
+        // =============================================================================
+        // Theme Routes
+        // =============================================================================
+        {
+          path: '/integrations/classroom',
+          name: 'VideoWikiClassLanding',
+          component: () => import('./views/videowiki-class/Landing.vue'),
+          meta: {
+            rule: 'isPublic'
+          }
+        }
+      ]
+    },
+    {
       path: '/error/not-authorized',
       component: () => import('./views/NotAuthorized.vue')
     },
     {
-      path: '/error/404', component: () => import('./views/Error404.vue'),
+      path: '/error/404',
+      component: () => import('./views/Error404.vue'),
       meta: {
         rule: 'isPublic'
       }

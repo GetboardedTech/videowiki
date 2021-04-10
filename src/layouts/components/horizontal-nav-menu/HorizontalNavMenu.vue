@@ -84,7 +84,7 @@ export default {
       if (group.submenu) {
         group.submenu.forEach(item => {
           if (active) return true;
-          if ((path == item.url || routeParent == item.slug) && item.url) {
+          if ((path === item.url || routeParent === item.slug) && item.url) {
             active = true;
           } else if (item.submenu) {
             this.checkGrpChildrenActive(item);

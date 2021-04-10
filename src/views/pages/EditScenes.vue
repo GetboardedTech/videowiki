@@ -7,11 +7,11 @@
       class="scene-card vs-con-loading__container"
       :class="{
         activeScene:
-          $store.state.studio.currentActiveScene === parseInt(indexs) + 1,
+          $store.state.studio.currentActiveScene === parseInt(indexs) + 1
       }"
     >
       <div
-        class="scene-video mb-base"
+        class="scene-video mb-4"
         :id="`scene_video_${indexs}`"
         :key="JSON.stringify(preparedScenesVideos)"
       >
@@ -27,62 +27,108 @@
           />
           {{ $t('studio.errors.e1') }}
         </video>
-        <video
-          v-else
-          width="100%"
-          height="auto"
-          controls
-          :src="selectedFromLibraryVideos[parseInt(indexs) + 1]"
-        >
-          {{ $t('studio.errors.e1') }}
-        </video>
+        <div v-else>
+          <img
+            v-if="isImageUrl(selectedFromLibraryVideos[parseInt(indexs) + 1])"
+            width="100%"
+            height="auto"
+            :src="selectedFromLibraryVideos[parseInt(indexs) + 1]"
+          />
+          <video
+            v-else
+            width="100%"
+            height="auto"
+            controls
+            :src="selectedFromLibraryVideos[parseInt(indexs) + 1]"
+          >
+            {{ $t('studio.errors.e1') }}
+          </video>
+        </div>
       </div>
-      <vs-row class="mb-5">
-        <div class="items-left mr-3 lg:w-1/3 md:w-1/3 w-1/2">
-          <small class="items-left">{{ $t('studio.course.c1') }}</small
-          ><br />
-          <!--vs-select v-model="sceneScriptPosition[indexs]">
-            <vs-select-item
-              v-for="(item, index) in options"
-              :key="index"
-              :value="item.id"
-              :text="item.label"
+      <div class="flex flex-wrap justify-between items-center mb-4">
+        <div class="flex items-center -mx-2 edit-subtitles m-2">
+          <div class="px-2">
+            <h6 class="text-primary">Subtitles</h6>
+          </div>
+          <div class="px-2" style="transform: translate(0px, 3px)">
+            <position-dropdown
+              @input="setScriptPosition(indexs, $event)"
+              :value="getStyle('sceneScriptPosition', indexs)"
             />
-          </vs-select-->
-          <v-select
-            :options="options"
-            :reduce="(label) => label.id"
-            required
-            label="label"
-            @input="setScriptPosition(indexs, $event)"
-            :value="getStyle('sceneScriptPosition', indexs)"
-          ></v-select>
+          </div>
+          <div class="px-2">
+            <!--alignment-dropdown :value="scriptAlign" /-->
+            <img src="@/assets/images/pages/align-left.svg" alt="align-left" />
+          </div>
+          <div class="px-2">
+            <v-swatches
+              :value="getStyle('sceneScriptColor', indexs)"
+              @input="setScriptColor(indexs, $event)"
+              popover-x="right"
+              popover-y="top"
+              swatches="text-advanced"
+            >
+              <div slot="trigger"><h4 class="text-primary">T</h4></div>
+            </v-swatches>
+          </div>
+          <div class="px-2">
+            <v-swatches
+              :value="getStyle('sceneBackgroundColor', indexs)"
+              @input="setBackgroundColor(indexs, $event)"
+              popover-x="right"
+              popover-y="top"
+              swatches="text-advanced"
+            >
+              <div
+                slot="trigger"
+                class="bg-primary rounded-sm"
+                style="width: 24px"
+              >
+                <h4 class="text-white">T</h4>
+              </div>
+            </v-swatches>
+          </div>
+          <div class="px-2">
+            <vx-tooltip text="Remove Subtitles">
+              <button
+                :disabled="!preparedScenesVideos[parseInt(indexs) + 1]"
+                @click="removePreparedScene(indexs)"
+                style="
+                  background: none;
+                  border: none;
+                  transform: translate(0px, 1px);
+                "
+              >
+                <vs-icon
+                  type="filled"
+                  icon="cancel"
+                  :color="
+                    !preparedScenesVideos[parseInt(indexs) + 1] ? '' : 'primary'
+                  "
+                  class="cursor-pointer"
+                  size="24px"
+                />
+              </button>
+            </vx-tooltip>
+          </div>
         </div>
-        <div class="items-left mr-3">
-          <small class="items-left">{{ $t('studio.course.c2') }}</small
-          ><br />
-          <v-swatches
-            :value="getStyle('sceneScriptColor', indexs) || '#808080'"
-            @input="setScriptColor(indexs, $event)"
-            popover-x="right"
-            swatches="text-advanced"
-          ></v-swatches>
-        </div>
-        <div class="items-left mr-3">
-          <small class="items-left">{{ $t('studio.course.c3') }}</small
-          ><br />
-          <v-swatches
-            :value="getStyle('sceneBackgroundColor', indexs) || '#000000'"
-            @input="setBackgroundColor(indexs, $event)"
-            popover-x="right"
-            swatches="text-advanced"
-          ></v-swatches>
-        </div>
-      </vs-row>
+        <!--div
+          v-if="parseInt(indexs) + 1 < sceneLength"
+          class="flex items-center -mx-2 edit-transition px-2 p-1"
+        >
+          <div class="mr-2">
+            <h6 class="text-primary">Transition</h6>
+          </div>
+          <transition-dropdown
+            @input="setSceneTransition(indexs, $event)"
+            :value="getSceneTransition(indexs)"
+          />
+        </div-->
+      </div>
       <div class="items-left mb-3">
         <small class="items-left">{{ $t('studio.course.c4') }}</small>
         <p
-          contenteditable="true"
+          contenteditable
           :id="'scene_script_' + indexs"
           class="scene-text"
           style="white-space: normal"
@@ -100,29 +146,34 @@
 <script>
 import constants from '../../../constant';
 import vSwatches from 'vue-swatches';
-import vSelect from 'vue-select';
+// import vSelect from 'vue-select';
 import 'vue-swatches/dist/vue-swatches.css';
-import 'vue-select/dist/vue-select.css';
+// import 'vue-select/dist/vue-select.css';
+import VxTooltip from '../../layouts/components/vx-tooltip/VxTooltip.vue';
+import PositionDropdown from './components/PositionDropdown.vue';
+// import AlignmentDropdown from './components/AlignmentDropdown';
+// import TransitionDropdown from './components/TransitionDropdown';
 export default {
   name: 'EditScenes',
   data() {
     return {
       constants,
-      options: [
-        { id: 1, label: 'Top' },
-        { id: 2, label: 'Center' },
-        { id: 3, label: 'Bottom' },
-      ],
       defaultStyle: {
-        sceneScriptColor: '#808080',
+        sceneScriptColor: '#ffffff',
         sceneScriptPosition: 3,
-        sceneBackgroundColor: '#000000',
+        sceneBackgroundColor: '#674ea7',
+        transition_type: 'left_to_right'
       },
+      scriptAlign: 'left'
     };
   },
   components: {
     vSwatches,
-    vSelect,
+    // vSelect,
+    VxTooltip,
+    PositionDropdown,
+    // AlignmentDropdown,
+    // TransitionDropdown
   },
   computed: {
     preparedScenesVideos() {
@@ -133,9 +184,24 @@ export default {
     },
     styles() {
       return this.$store.state.studio.styles;
+    }
+    /* sceneTransitionList() {
+      return this.$store.state.studio.sceneTransition;
     },
+    sceneLength() {
+      return Object.keys(this.$store.state.studio.scenes).length;
+    }, */
   },
   methods: {
+    isImageUrl(urlString) {
+      try {
+        const imgExtentions = ['jpg', 'png', 'jpeg'];
+        urlString = new URL(urlString);
+        return imgExtentions.includes(urlString.pathname.split('.')[1]);
+      } catch (err) {
+        return false;
+      }
+    },
     scriptInput(e) {
       this.$store.commit('studio/editSceneScript', e.target.innerText);
     },
@@ -154,7 +220,7 @@ export default {
         this.$store.commit('studio/setStyles', {
           prop: prop,
           sceneNum: idx,
-          value: this.defaultStyle[prop],
+          value: this.defaultStyle[prop]
         });
       }
       return this.styles[idx][prop];
@@ -163,55 +229,76 @@ export default {
       this.$store.commit('studio/setStyles', {
         prop: 'sceneScriptColor',
         sceneNum: parseInt(idx),
-        value: value,
+        value: value
       });
     },
     setScriptPosition(idx, value) {
+      console.log({ sceneNum: idx, pos: value });
       this.$store.commit('studio/setStyles', {
         prop: 'sceneScriptPosition',
         sceneNum: parseInt(idx),
-        value: value,
+        value: value
       });
     },
     setBackgroundColor(idx, value) {
       this.$store.commit('studio/setStyles', {
         prop: 'sceneBackgroundColor',
         sceneNum: parseInt(idx),
-        value: value,
+        value: value
       });
     },
-    prepareScene(indexs) {
-      /* console.log(
-        'selected videos',
-        this.$store.state.studio.selectedFromLibraryVideos
-      ); */
-      /* this.$Progress.start();
-      this.$vs.loading({ color: 'transparent' }); */
+    setScriptAlignment(idx, value) {
+      this.$store.commit('studio/setStyles', {
+        prop: 'transition_type',
+        sceneNum: parseInt(idx),
+        value: value
+      });
+    },
+    /* setSceneTransition(idx, value) {
+      this.$store.commit('studio/setTransition', {
+        sceneNum: parseInt(idx),
+        value,
+      });
+    },
+    getSceneTransition(idx) {
+      if (this.sceneTransitionList[parseInt(idx)])
+        return this.sceneTransitionList[parseInt(idx)];
+      else {
+        this.setSceneTransition(idx, 'no_motion');
+        return 'no_motion';
+      }
+    }, */
+    removePreparedScene(indexs) {
+      this.$store.commit('studio/setScriptSceneVideo', {
+        sceneNum: parseInt(indexs) + 1,
+        value: null
+      });
+    },
+    async prepareScene(indexs) {
       this.$vs.loading({
         background: '#fff',
         container: `#scene_card_${indexs}`,
-        text: 'Adding Subtitles...',
+        text: 'Adding Subtitles...'
       });
-      this.$store.commit(
-        'studio/editSceneScript',
-        document.getElementById('scene_script_' + indexs).innerText
-      );
+      this.$store.commit('studio/editSceneScript', {
+        value: document.getElementById('scene_script_' + indexs).innerText,
+        sceneNum: parseInt(indexs)
+      });
       const dataObj = {
         url: this.$store.state.studio.selectedFromLibraryVideos[
           parseInt(indexs) + 1
         ],
         sceneScript: this.$store.state.studio.scenes[parseInt(indexs)],
-        /* sceneScriptPosition: this.sceneScriptPosition[indexs],
-        sceneScriptColor: this.sceneScriptColor[indexs],
-        sceneBackgroundColor: this.sceneBackgroundColor[indexs], */
-        ...this.styles[indexs],
+        bg_opacity: 0.8,
+        transition_type: 'right_to_left',
+        ...this.styles[indexs]
       };
       this.$store
         .dispatch('studio/editSceneScript', dataObj)
-        .then((res) => {
+        .then(res => {
           const response = {
             sceneNum: parseInt(indexs) + 1,
-            value: res.data.video_url,
+            value: res.data.video_url
           };
           this.$store.commit('studio/setScriptSceneVideo', response);
           // this.$store.commit('studio/selectVideo', res.data.url);
@@ -223,14 +310,14 @@ export default {
           this.$vs.loading.close(); */
           this.updateComponent();
         })
-        .catch((err) => {
+        .catch(err => {
           console.log('edit scene script', err);
-          /*this.$Progress.fail();
-          this.$vs.loading.close();*/
+          /* this.$Progress.fail();
+          this.$vs.loading.close(); */
           this.$vs.notify({
             title: 'Error',
             text: 'Cannot merge script with video',
-            color: 'danger',
+            color: 'danger'
           });
         })
         .finally(() => {
@@ -254,7 +341,7 @@ export default {
           this.$store.commit('studio/setActiveScene', parseInt(s) + 1);
         }
       }
-    },
+    }
   },
   mounted() {
     window.addEventListener('scroll', this.updateScroll);
@@ -265,7 +352,7 @@ export default {
   },
   destroyed() {
     window.removeEventListener('scroll', this.updateScroll);
-  },
+  }
 };
 </script>
 
@@ -301,5 +388,14 @@ export default {
   border: 1px solid gray;
   border-radius: 3px;
   padding: 0.5rem;
+}
+.edit-subtitles {
+  background: rgba(107, 77, 189, 0.06);
+  border-radius: 4px;
+  padding: 5px;
+}
+.edit-transition {
+  background: rgba(107, 77, 189, 0.06);
+  border-radius: 4px;
 }
 </style>

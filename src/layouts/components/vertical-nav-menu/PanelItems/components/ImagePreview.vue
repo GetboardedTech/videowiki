@@ -1,8 +1,12 @@
 <template>
-  <div class="img-hover-zoom relative">
-    <img width="100%" height="auto" :src="src" @click="showOverlay(imageId)" />
-    <div class="absolute img-overlay p-5 hidden" :id="imageId">
-      <div class="flex justify-between">
+  <div class="relative img-container">
+    <img
+      width="100%"
+      :src="src"
+      class="image"
+    /><!--@click="showOverlay(imageId)" /-->
+    <div class="absolute img-overlay p-5" :id="imageId">
+      <!--div class="flex justify-between">
         <h6 class="text-white">Select Motion</h6>
         <vs-icon
           icon="clear"
@@ -10,8 +14,18 @@
           class="text-white"
           @click="hideOverlay(imageId)"
         />
-      </div>
+      </div-->
+      <h6 class="text-white">Select Motion</h6>
       <div class="flex flex-wrap justify-center items-center -m-1 mt-2">
+        <div class="p-1">
+          <vs-button
+            type="filled"
+            size="small"
+            color="dark"
+            @click="$emit('motion', 'none')"
+            >None</vs-button
+          >
+        </div>
         <div class="p-1">
           <vs-button
             type="filled"
@@ -46,8 +60,8 @@ export default {
     hideOverlay(imgId) {
       const overlay = document.getElementById(imgId);
       overlay.classList.add('hidden');
-    },
-  },
+    }
+  }
 };
 </script>
 <style scoped>
@@ -62,7 +76,6 @@ export default {
 .img-hover-zoom {
   overflow: hidden;
   cursor: pointer;
-  max-height: 140px;
 }
 .img-hover-zoom img {
   transform-origin: 50% 65%;
@@ -75,9 +88,21 @@ export default {
 }
 .img-overlay {
   height: 100%;
+  transition: 0.5s ease;
   width: 100%;
+  opacity: 0;
   top: 0;
-  z-index: 100;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.7);
+}
+.image {
+  max-height: 140px;
+  transition: 0.5s ease;
+  backface-visibility: hidden;
+}
+.img-container:hover .image {
+  opacity: 0.3;
+}
+.img-container:hover .img-overlay {
+  opacity: 1;
 }
 </style>

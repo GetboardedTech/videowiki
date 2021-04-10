@@ -1,6 +1,6 @@
 <template>
-  <div class="vx-card items-center" style="height: 100%">
-    <div class="vx-card__collapsible-content vs-con-loading__container">
+  <div class="vx-card items-center">
+    <div class="vx-card__collapsible-content">
       <div class="vx-card__body">
         {{ /*$t('studio.sidebarPanel.publish.p1')*/ }}
         <!--div class="mt-10">
@@ -8,19 +8,19 @@
         </div-->
         <div>
           <div
-            v-for="(item, idx) in activities"
+            v-for="(status, action, idx) in actionList"
             :key="idx"
             class="no-border relative font-medium flex items-center timeline-view"
           >
             <vs-icon
-              :icon="isPerformed(item) ? 'done' : 'clear'"
-              :bg="isPerformed(item) ? 'success' : 'danger'"
+              :icon="status ? 'done' : 'clear'"
+              :bg="status ? 'success' : 'danger'"
               round
               size="20px"
               class="text-white"
             />
 
-            <span>{{ item }}</span>
+            <span>{{ action }}</span>
           </div>
         </div>
         <div class="text-left mb-2 mt-6">
@@ -53,7 +53,7 @@
             v-validate="'required'"
           />
         </div>
-        <div class="flex items-center mt-4">
+        <div class="flex items-center mt-4" v-if="!insideIframe">
           <label for="paid-status" class="mr-2"><h6>Video Access</h6></label>
           <vs-switch v-model="isPaid" id="paid-status">
             <span slot="on">Paid</span>
@@ -92,17 +92,13 @@
 </template>
 
 <script>
-//import VxTimeline from '@/components/timeline/VxTimeline';
-
 export default {
   name: 'PublishPanel',
   components: {
     // VxTimeline,
   },
   data() {
-    return {
-      activities: ['Script', 'Scenes', 'Subtitles', 'Narration'],
-    };
+    return {};
   },
   created() {
     if (!this.$route.params.videoId) {
@@ -111,8 +107,29 @@ export default {
     }
   },
   computed: {
+    insideIframe() {
+      return this.$store.state.insideIframe;
+    },
     getTags() {
       return this.$store.state.studio.tags;
+    },
+    actionList() {
+      const steps = {
+        Script: true,
+        Scenes: true,
+        Subtitles: false,
+        Sound: false
+      };
+      if (this.$store.state.studio.preparedScenesVideos.some(el => el)) {
+        steps.Subtitles = true;
+      }
+      if (
+        this.$store.state.studio.addedAudioVideos.some(el => el) ||
+        this.$store.state.studio.backgroundMusic.url
+      ) {
+        steps.Sound = true;
+      }
+      return steps;
     },
     title: {
       get() {
@@ -121,9 +138,9 @@ export default {
       set(value) {
         this.$store.commit('studio/SET_VIDEO_ATTR', {
           key: 'title',
-          value: value,
+          value: value
         });
-      },
+      }
     },
     description: {
       get() {
@@ -132,9 +149,9 @@ export default {
       set(value) {
         this.$store.commit('studio/SET_VIDEO_ATTR', {
           key: 'description',
-          value: value,
+          value: value
         });
-      },
+      }
     },
     isPaid: {
       get() {
@@ -143,10 +160,10 @@ export default {
       set(value) {
         this.$store.commit('studio/SET_VIDEO_ATTR', {
           key: 'isPaid',
-          value: value,
+          value: value
         });
-      },
-    },
+      }
+    }
   },
   methods: {
     addTag(e) {
@@ -155,14 +172,8 @@ export default {
     },
     deleteAll() {
       this.$store.commit('studio/setTags', []);
-    },
-    isPerformed(value) {
-      return this.$store.state.studio.steps[value];
-    },
-    getVideoInfo(prop) {
-      return this.$store.state.studio.video[prop];
-    },
-  },
+    }
+  }
 };
 </script>
 

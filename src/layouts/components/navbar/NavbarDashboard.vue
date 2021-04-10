@@ -16,9 +16,7 @@
         <div
           class="vx-row w-full md:w-2/3 sm:w-1/1 p-2 items-center justify-center"
         >
-          <div
-            class="w-full lg:w-1/2 md:w-1/1 sm:w-1/1 relative hidden lg:block"
-          >
+          <div class="w-full lg:w-1/2 relative hidden lg:block">
             <input
               placeholder="Search project"
               v-model="videoSearchQuery"
@@ -37,27 +35,12 @@
               type="filled"
               icon="add_circle"
               @click="$router.push('/studio')"
-              >Create Videos</vs-button
+              >Create a Video</vs-button
             >
           </div>
         </div>
-        <div class="vx-row justify-end w-1/3">
-          <div class="mr-3">
-            <vs-button
-              v-if="!this.$store.state.isWalletConnected"
-              class="bg-custom-purple text-base font-bold hidden lg:block"
-              type="filled"
-              @click="connect"
-              >Connect Wallet</vs-button
-            >
-            <vs-button
-              v-else
-              class="bg-custom-purple text-base font-bold hidden lg:block"
-              type="filled"
-              @click="disconnect"
-              >Disconnect</vs-button
-            >
-          </div>
+        <div class="flex justify-end lg:w-1/3 w-full">
+          <wallet class="mr-3 hidden md:block lg:block" />
           <div>
             <profile-drop-down v-if="accessToken" />
             <vs-button
@@ -78,10 +61,12 @@
 <script>
 import ProfileDropDown from './components/ProfileDropDown.vue';
 import { mapState } from 'vuex';
+import Wallet from './components/Wallet.vue';
 export default {
   name: 'the-navbar-horizontal',
   components: {
-    ProfileDropDown
+    ProfileDropDown,
+    Wallet,
   },
   data() {
     return {
@@ -103,8 +88,8 @@ export default {
     },
     buy() {
       this.$store.dispatch('buyContent');
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>

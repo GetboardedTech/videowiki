@@ -13,10 +13,7 @@
       <p class="font-semibold items-left mb-base" style="white-space: normal">
         {{ s }}
       </p>
-      <div
-        v-if="!!addedAudioVideos[parseInt(indexs) + 1]"
-        class="mb-base"
-      >
+      <div v-if="!!addedAudioVideos[parseInt(indexs) + 1]" class="mb-base">
         <video
           width="100%"
           height="auto"
@@ -55,12 +52,18 @@
         </video>
       </div>
       <div v-else class="mb-base">
-        <video
+        <img
+          v-if="isImageUrl(selectedFromLibraryVideos[parseInt(indexs) + 1])"
           width="100%"
           height="auto"
-          controls
-          muted
+          :src="selectedFromLibraryVideos[parseInt(indexs) + 1]"
+        />
+        <video
+          v-else
+          width="100%"
+          height="auto"
           :id="'video_' + indexs"
+          controls
           :src="selectedFromLibraryVideos[parseInt(indexs) + 1]"
         >
           {{ $t('studio.errors.e1') }}
@@ -116,23 +119,23 @@ export default {
     preparedScenesVideos() {
       return this.$store.state.studio.preparedScenesVideos;
     },
+    insideIframe() {
+      return this.$store.state.insideIframe;
+    }
   },
   methods: {
+    isImageUrl(urlString) {
+      try {
+        const imgExtentions = ['jpg', 'png', 'jpeg'];
+        urlString = new URL(urlString);
+        return imgExtentions.includes(urlString.pathname.split('.')[1]);
+      } catch (err) {
+        return false;
+      }
+    },
     updateComponent() {
       this.$forceUpdate();
     },
-    // playVid() {
-    //   var vid = document.getElementById("myvid");
-    //   console.log(vid);
-    //   if (vid.paused) {
-    //     vid.play();
-    //     ppbutton.innerHTML = "Pause";
-    //     }
-    // else  {
-    //     vid.pause();
-    //     ppbutton.innerHTML = "Play";
-    //     }
-    // },
     callback(msg) {
       console.debug('Event: ', msg);
     },
@@ -146,7 +149,7 @@ export default {
           .getBoundingClientRect();
         // console.log(s, "bounding client", rect.top, rect.bottom);
 
-        if (rect.top < 200 && rect.bottom > 500) {
+        if (rect.top < 200 && rect.bottom > (this.insideIframe ? 420 : 500)) {
           // console.log(s+" is active")
           this.$store.commit('studio/setActiveScene', parseInt(s) + 1);
         }

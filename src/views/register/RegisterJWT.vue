@@ -1,76 +1,30 @@
 <template>
-  <div class="clearfix">
-    <!--vs-input
-      v-validate="'required|alpha_dash|min:3'"
-      data-vv-validate-on="blur"
-      label-placeholder="First Name"
-      name="firstName"
-      placeholder="First Name"
-      v-model="firstName"
-      class="w-full"
-    />
-    <span class="text-danger text-sm">{{ errors.first('firstName') }}</span>
-
-    <vs-input
-      v-validate="'required|alpha_dash|min:3'"
-      data-vv-validate-on="blur"
-      label-placeholder="Last Name"
-      name="lastName"
-      placeholder="Last Name"
-      v-model="lastName"
-      class="w-full"
-    />
-    <span class="text-danger text-sm">{{ errors.first('lastName') }}</span>
-
-    <vs-input
-      v-validate="'required|email'"
-      data-vv-validate-on="blur"
-      name="email"
-      type="email"
-      label-placeholder="Email"
-      placeholder="Email"
-      v-model="email"
-      class="w-full mt-6"
-    />
-    <span class="text-danger text-sm">{{ errors.first('email') }}</span>
-
-    <vs-input
-      ref="password"
-      type="password"
-      data-vv-validate-on="blur"
-      v-validate="'required|min:6|max:10'"
-      name="password"
-      label-placeholder="Password"
-      placeholder="Password"
-      v-model="password"
-      class="w-full mt-6"
-    />
-    <span class="text-danger text-sm">{{ errors.first('password') }}</span>
-
-    <vs-input
-      type="password"
-      v-validate="'min:6|max:10|confirmed:password'"
-      data-vv-validate-on="blur"
-      data-vv-as="password"
-      name="confirm_password"
-      label-placeholder="Confirm Password"
-      placeholder="Confirm Password"
-      v-model="confirm_password"
-      class="w-full mt-6"
-    />
-    <span class="text-danger text-sm">{{
-      errors.first('confirm_password')
-    }}</span-->
-    <!--vs-divider> Or </vs-divider-->
+  <div>
     <form>
+      <div class="flex mb-6">
+        <div class="w-1/2 mr-2">
+          <h6 class="mb-4">First Name<span class="text-danger">*</span></h6>
+          <input
+            type="text"
+            placeholder="Enter First Name"
+            class="modified-input"
+            autocomplete="off"
+            v-model="firstName"
+          />
+        </div>
+        <div class="w-1/2">
+          <h6 class="mb-4">Last Name<span class="text-danger">*</span></h6>
+          <input
+            type="text"
+            placeholder="Enter Last Name"
+            class="modified-input"
+            autocomplete="off"
+            v-model="lastName"
+          />
+        </div>
+      </div>
       <div class="vx-row mb-6">
         <div class="vx-col w-full">
-          <!--vs-input
-          class="w-full"
-          type="email"
-          label="Email Address"
-          v-model="email"
-        /-->
           <h6 class="mb-4">Email<span class="text-danger">*</span></h6>
           <input
             type="email"
@@ -83,15 +37,6 @@
       </div>
       <div class="vx-row mb-6">
         <div class="vx-col w-full">
-          <!--vs-input
-          class="w-full"
-          icon-pack="feather"
-          icon="icon icon-eye-off"
-          icon-after
-          type="password"
-          label="Password"
-          v-model="password"
-        /-->
           <h6 class="mb-4">
             Create Password<span class="text-danger">*</span>
           </h6>
@@ -110,34 +55,10 @@
               size="25px"
             />
           </div>
-          <!--vx-input-group
-          class="mb-base"
-        >
-          <vs-input
-            class="w-full"
-            type="password"
-            label="Password"
-            v-model="password"
-          />
-          <template slot="append">
-            <div class="append-text btn-addon">
-              <vs-button icon-pack="feather" icon="icon icon-eye-off"></vs-button>
-            </div>
-          </template>
-        </vx-input-group-->
         </div>
       </div>
       <div class="vx-row mb-6">
         <div class="vx-col w-full">
-          <!--vs-input
-          class="w-full"
-          icon-pack="feather"
-          icon="icon icon-eye-off"
-          icon-after
-          type="Password"
-          label="Repeat Password"
-          v-model="confirm_password"
-        /-->
           <h6 class="mb-4">
             Repeat Password<span class="text-danger">*</span>
           </h6>
@@ -156,21 +77,6 @@
               size="25px"
             />
           </div>
-          <!--vx-input-group
-          class="mb-base"
-        >
-          <vs-input
-            class="w-full"
-            type="password"
-            label="Password"
-            v-model="password"
-          />
-          <template slot="append">
-            <div class="append-text btn-addon">
-              <vs-button icon-pack="feather" icon="icon icon-eye-off"></vs-button>
-            </div>
-          </template>
-        </vx-input-group-->
         </div>
       </div>
 
@@ -204,8 +110,8 @@ export default {
     popup: {
       type: Boolean,
       default: false,
-      required: false,
-    },
+      required: false
+    }
   },
   data() {
     return {
@@ -216,20 +122,21 @@ export default {
       confirm_password: '',
       create_showPassword: false,
       repeat_showPassword: false,
-      isTermsConditionAccepted: true,
+      isTermsConditionAccepted: true
     };
   },
   computed: {
     validateForm() {
       return (
         !this.errors.any() &&
-        this.displayName !== '' &&
+        this.firstName !== '' &&
+        this.lastName !== '' &&
         this.email !== '' &&
         this.password !== '' &&
         this.confirm_password !== '' &&
         this.isTermsConditionAccepted === true
       );
-    },
+    }
   },
   methods: {
     checkLogin() {
@@ -243,7 +150,7 @@ export default {
           text: 'You are already logged in!',
           iconPack: 'feather',
           icon: 'icon-alert-circle',
-          color: 'warning',
+          color: 'warning'
         });
 
         return false;
@@ -262,19 +169,19 @@ export default {
           lastName: this.lastName,
           email: this.email,
           password: this.password,
-          confirmPassword: this.confirm_password,
+          confirmPassword: this.confirm_password
         },
-        notify: this.$vs.notify,
+        notify: this.$vs.notify
       };
       this.$store
         .dispatch('auth/registerUser', payload)
-        .then((response) => {
+        .then(response => {
           const payload = {
             checkbox_remember_me: true,
             userDetails: {
               email: this.email,
-              password: this.password,
-            },
+              password: this.password
+            }
           };
 
           this.$store
@@ -286,33 +193,33 @@ export default {
               if (this.popup) this.$emit('registered');
               else this.$router.push('/');
             })
-            .catch((error) => {
+            .catch(error => {
               this.$vs.loading.close();
               this.$vs.notify({
                 title: 'Login Error',
                 text: error.message,
                 iconPack: 'feather',
                 icon: 'icon-alert-circle',
-                color: 'danger',
+                color: 'danger'
               });
             });
         })
-        .catch((error) => {
+        .catch(error => {
           this.$vs.loading.close();
           this.$vs.notify({
             title: 'Register Error',
             text: error.message,
             iconPack: 'feather',
             icon: 'icon-alert-circle',
-            color: 'danger',
+            color: 'danger'
           });
         });
     },
     navigateToLogin() {
       if (this.popup) this.$emit('toLogin');
       else this.$router.push('/login');
-    },
-  },
+    }
+  }
 };
 </script>
 <style scoped>

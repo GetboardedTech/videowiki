@@ -98,7 +98,7 @@
       </div>
     </div>
 
-    <div class="section bg-white">
+    <!--div class="section bg-white">
       <div class="w-full">
         <div class="vx-card" style="height: 100%">
           <div class="vx-card__collapsible-content vs-con-loading__container">
@@ -161,12 +161,12 @@
                     <p class="mb-4">Email: info@videowiki.pt</p>
                   </div>
                 </vx-card>
-              </div-->
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </div-->
 
     <div class="section">
       <NewsLetter />
@@ -190,7 +190,7 @@ export default {
     getTeamList() {
       return teamList.slice(0, 4);
     }
-  },
+  }
 };
 </script>
 

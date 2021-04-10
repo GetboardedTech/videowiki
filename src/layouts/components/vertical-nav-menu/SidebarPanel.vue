@@ -120,12 +120,22 @@
       <ScenesPanel v-else-if="$store.state.studio.panel.scenes" />
       <MusicPanel v-else-if="$store.state.studio.panel.music" />
       <StylePanel v-else-if="$store.state.studio.panel.style" />
-      <PublishPanel v-else-if="$store.state.studio.panel.publish" />
+      <component
+        :is="scrollbarTag"
+        ref="verticalNavMenuPs"
+        class="scroll-area-v-nav-menu"
+        :settings="settings"
+        :key="$vs.rtl"
+        v-else-if="$store.state.studio.panel.publish"
+      >
+        <PublishPanel />
+      </component>
     </vs-col>
   </vs-row>
 </template>
 
 <script>
+import VuePerfectScrollbar from 'vue-perfect-scrollbar';
 import TextPanel from './PanelItems/TextPanel.vue';
 import StylePanel from './PanelItems/StylePanel';
 import LibraryPanel from './PanelItems/LibraryPanel';
@@ -141,9 +151,22 @@ export default {
     LibraryPanel,
     StylePanel,
     TextPanel,
+    VuePerfectScrollbar
   },
   data() {
-    return {};
+    return {
+      settings: {
+        // perfectScrollbar settings
+        maxScrollbarLength: 60,
+        wheelSpeed: 1,
+        swipeEasing: true
+      }
+    };
+  },
+  computed: {
+    scrollbarTag() {
+      return this.$store.getters.scrollbarTag;
+    }
   },
   methods: {
     toggleText() {
@@ -158,7 +181,7 @@ export default {
         this.$vs.notify({
           color: 'primary',
           // title: "Cannot",
-          text: this.$t('studio.sidebarPanel.sp7'),
+          text: this.$t('studio.sidebarPanel.sp7')
         });
       } /* else if (sceneNum !== -1) {
         this.$vs.notify({
@@ -176,7 +199,7 @@ export default {
         this.$vs.notify({
           color: 'primary',
           // title: "Cannot",
-          text: this.$t('studio.sidebarPanel.sp8'),
+          text: this.$t('studio.sidebarPanel.sp8')
         });
       } else {
         this.$store.commit('studio/toggleStyle');
@@ -187,15 +210,15 @@ export default {
         (scene) => scene
       ); */
       if (
-        this.$store.state.studio.selectedFromLibraryVideos.length ===
-        0 /* this.$store.state.studio.videoWidth === null || this.$store.state.studio.videoHeight === null */
+        this.$store.state.studio.selectedFromLibraryVideos.every(el => !el)
+        /* this.$store.state.studio.videoWidth === null || this.$store.state.studio.videoHeight === null */
       ) {
         // this.toggleStyle();
         this.toggleLibrary();
         this.$vs.notify({
           color: 'primary',
           // title: "Cannot",
-          text: this.$t('studio.sidebarPanel.sp8'),
+          text: this.$t('studio.sidebarPanel.sp8')
         });
       } /* else if (sceneNum !== -1) {
         //this.$store.commit('studio/setActiveScene', sceneNum + 1);
@@ -213,13 +236,13 @@ export default {
     toggleMusic() {
       if (
         !this.$store.state.studio.skipSubtitles &&
-        this.$store.state.studio.preparedScenesVideos.length === 0
+        this.$store.state.studio.preparedScenesVideos.every(el => !el)
       ) {
         this.toggleScenes();
         this.$vs.notify({
           color: 'primary',
           // title: "Cannot",
-          text: this.$t('studio.sidebarPanel.sp10'),
+          text: this.$t('studio.sidebarPanel.sp10')
         });
       } else {
         this.$store.commit('studio/toggleMusic');
@@ -229,19 +252,19 @@ export default {
       if (
         !this.$store.state.studio.backgroundMusic.url &&
         !this.$store.state.studio.skipMusic &&
-        this.$store.state.studio.addedAudioVideos.length === 0
+        this.$store.state.studio.addedAudioVideos.every(el => !el)
       ) {
         this.toggleMusic();
         this.$vs.notify({
           color: 'primary',
           // title: "Cannot",
-          text: this.$t('studio.sidebarPanel.sp11'),
+          text: this.$t('studio.sidebarPanel.sp11')
         });
       } else {
         this.$store.commit('studio/togglePublish');
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -267,5 +290,11 @@ export default {
   text-align: center;
   text-align: -moz-center;
   text-align: -webkit-center;
+}
+.scroll-area-v-nav-menu {
+  position: relative;
+  margin: auto;
+  width: 100%;
+  height: calc(var(--vh, 1vh) * 100 - 69px);
 }
 </style>

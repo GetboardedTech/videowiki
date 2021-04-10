@@ -25,6 +25,9 @@ const getters = {
 
   scrollbarTag: state => {
     return state.is_touch_device ? 'div' : 'VuePerfectScrollbar';
+  },
+  sectionScrollbarTag: state => {
+    return state.windowHeight <= 600 ? 'VuePerfectScrollbar' : 'div';
   }
 };
 
