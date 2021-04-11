@@ -2,6 +2,9 @@
 // import { OceanFixedRateExchange } from '@oceanprotocol/lib/dist/node/exchange/FixedRateExchange';
 // import { LoggerInstance, LogLevel } from '@oceanprotocol/lib/dist/node/utils';
 import store from '../store/store';
+
+import { createAsset } from "./versionControl"
+
 let Ocean = '';
 let DataTokens = '';
 let OceanFixedRateExchange = '';
@@ -180,8 +183,9 @@ async function publishContent(author, metadata) {
     // move to next step
     stepNumber++;
     store.commit('SET_CURRENT_TRANSACTION_STEP', stepNumber);
-
+    
     return { did, exchangeId, dataTokenAddress };
+
   } catch (err) {
     console.log('error catched at OceanMarket.js');
     throw err;
