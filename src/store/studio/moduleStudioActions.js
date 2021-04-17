@@ -117,7 +117,7 @@ export default {
         .post(constants.apiUrl + '/sd/', dataObj)
         .then(res => {
           commit('setSentences', res.data.sentences);
-          commit('setKeywords', res.data.keywords);
+          // commit('setKeywords', res.data.keywords);
           commit('setSourceLanguage', res.data.srcLang);
           resolve(res);
         })
@@ -126,7 +126,7 @@ export default {
         });
     });
   },
-  /* keywordExtraction({ commit }) {
+  keywordExtraction({ commit }) {
     return new Promise((resolve, reject) => {
       const dataObj = {
         text: store.state.studio.videoScript,
@@ -142,7 +142,7 @@ export default {
           reject(err);
         });
     });
-  }, */
+  },
   audioSuggestions({ commit }) {
     return new Promise((resolve, reject) => {
       const dataObj = {

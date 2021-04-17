@@ -83,7 +83,7 @@ async function onConnect() {
   // Subscribe to accounts change
   provider.on('accountsChanged', accounts => {
     fetchAccountData();
-    connectToOceanMarketPlace(provider);
+    /*  connectToOceanMarketPlace(provider);  */
   });
   /* Subscribe to chainId change
   provider.on("chainChanged", (chainId) => {
@@ -101,7 +101,7 @@ async function onConnect() {
 }
 
 async function onBuy() {
-  buyContent(provider);
+  /* buyContent(provider); */
 }
 
 async function onDisconnect() {

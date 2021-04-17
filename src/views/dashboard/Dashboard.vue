@@ -78,7 +78,7 @@ export default {
   components: {
     TheHeader,
     VideoCard,
-    Transaction,
+    Transaction
   },
   data() {
     return {
@@ -91,7 +91,7 @@ export default {
       isDownloadable: false,
       showTransactionModal: false,
       txType: 'Buy',
-      currentTxPhase: 'Processing',
+      currentTxPhase: 'Processing'
     };
   },
   computed: {
@@ -103,7 +103,7 @@ export default {
     },
     accountAddress() {
       return this.$store.state.accountAddress;
-    },
+    }
   },
   mounted() {
     this.getVideoList();
@@ -116,7 +116,7 @@ export default {
       const url = '/videoapi/home_videos';
       this.$vs.loading({
         background: 'transparent',
-        container: '#div-with-loading',
+        container: '#div-with-loading'
       });
       this.isLoading = true;
       this.getRequest(url, this.handleResponse);
@@ -137,7 +137,7 @@ export default {
         const route = this.$router.resolve({
           name: 'Video View',
           params: { slug: selectedVideo.id },
-          query: { url: selectedVideo.video },
+          query: { url: selectedVideo.video }
         });
         window.open(route.href, '_blank');
       }
@@ -155,7 +155,7 @@ export default {
         );
         this.isDownloadable = await this.$store.dispatch('getDownloadStatus', {
           dataTokenAddress: this.videoTxData.dataToken,
-          accountAddress: this.accountAddress,
+          accountAddress: this.accountAddress
         });
         this.showTransactionModal = false;
         // this.detailView(this.selectedVideo);
@@ -173,7 +173,7 @@ export default {
       try {
         await this.$store.dispatch('startDownload', {
           did: this.videoTxData.dod,
-          dta: this.videoTxData.dataToken,
+          dta: this.videoTxData.dataToken
         });
         setTimeout(() => (this.showTransactionModal = false), 2000);
       } catch (error) {
@@ -187,7 +187,7 @@ export default {
         container: `#buy-download`,
         background: '#fff',
         color: 'primary',
-        scale: 0.8,
+        scale: 0.8
       });
       // this.isLoading = true;
       this.getRequest(url, this.callBackVideoTxData);
@@ -201,12 +201,12 @@ export default {
       );
       this.isDownloadable = await this.$store.dispatch('getDownloadStatus', {
         dataTokenAddress: this.videoTxData.dataToken,
-        accountAddress: this.accountAddress,
+        accountAddress: this.accountAddress
       });
       this.oceanRequired = price;
       this.$vs.loading.close(`#buy-download > .con-vs-loading`);
-    },
-  },
+    }
+  }
 };
 </script>
 <style scoped>

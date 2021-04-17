@@ -307,19 +307,19 @@ export default {
         .dispatch('studio/sentenceDetection', this.breakType)
         .then(res => {
           console.log('sentences', res.data.sentences);
-          console.log('keywords', res.data.keywords);
-          /* this.$store
+          // console.log('keywords', res.data.keywords);
+          this.$store
             .dispatch('studio/keywordExtraction')
             .then(resKeywords => {
-              console.log('keywords', resKeywords); */
-          this.$store
-            .dispatch('studio/videoSuggestions')
-            .then(resVideos => {
-              console.log('videos', resVideos);
-              this.$Progress.finish();
-              this.$vs.loading.close();
-              this.$store.commit('studio/resetState');
-              /* this.$store
+              console.log('keywords', resKeywords);
+              this.$store
+                .dispatch('studio/videoSuggestions')
+                .then(resVideos => {
+                  console.log('videos', resVideos);
+                  this.$Progress.finish();
+                  this.$vs.loading.close();
+                  this.$store.commit('studio/resetState');
+                  /* this.$store
                     .dispatch('studio/audioSuggestions')
                     .then(res => {
                       this.$Progress.finish();
@@ -336,6 +336,17 @@ export default {
                         color: 'danger'
                       });
                     }); */
+                })
+                .catch(err => {
+                  console.log(err);
+                  this.$Progress.fail();
+                  this.$vs.loading.close();
+                  this.$vs.notify({
+                    title: 'Error Occured',
+                    text: 'Video Suggestions',
+                    color: 'danger'
+                  });
+                });
             })
             .catch(err => {
               console.log(err);
@@ -343,22 +354,11 @@ export default {
               this.$vs.loading.close();
               this.$vs.notify({
                 title: 'Error Occured',
-                text: 'Video Suggestions',
+                text: 'Keyword Extraction',
                 color: 'danger'
               });
             });
         })
-        /* .catch(err => {
-              console.log(err);
-              this.$Progress.fail();
-              this.$vs.loading.close();
-              this.$vs.notify({
-                title: 'Error Occured',
-                text: 'keyword Extraction',
-                color: 'danger'
-              });
-            });
-        }) */
         .catch(err => {
           console.log(err);
           this.$Progress.fail();
